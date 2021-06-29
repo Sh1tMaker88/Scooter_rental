@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org"
+      xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity3" xmlns:form="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8">
+    <title>Registration</title>
+</head>
+<body>
+<h3>Create user</h3>
+
+<form th:action="@{/registration}" th:object="${userForm}" th:method="POST">
+    <label for="username">Username</label>
+    <input type="text" th:field="*{username}" id="username">
+    <div th:if="${#fields.hasErrors('username')}" th:errors="*{username}">Name error</div>
+    <br>
+    <label for="firstName">First name</label>
+    <input type="text" th:field="*{firstName}" id="firstName">
+    <div th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}">Name error</div>
+    <br>
+    <label for="lastName">Last name</label>
+    <input type="text" th:field="*{lastName}" id="lastName">
+    <div th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}">Name error</div>
+    <br>
+    <label for="email">Email</label>
+    <input type="text" th:field="*{email}" id="email">
+    <div th:if="${#fields.hasErrors('email')}" th:errors="*{email}">Name error</div>
+    <br>
+    <label for="password">Password</label>
+    <input type="text" th:field="*{password}" id="password">
+    <div th:if="${#fields.hasErrors('password')}" th:errors="*{password}">Name error</div>
+    <br><br>
+
+    <input type="submit" value="Create User">
+</form>
+</body>
+</html>

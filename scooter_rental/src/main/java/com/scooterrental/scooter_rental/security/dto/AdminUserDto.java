@@ -1,23 +1,19 @@
 package com.scooterrental.scooter_rental.security.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.scooterrental.scooter_rental.security.model.Status;
 import com.scooterrental.scooter_rental.security.model.User;
 import lombok.Data;
 
-import java.util.Date;
-
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class UserDto {
-
+public class AdminUserDto {
     private Long id;
     private String username;
-    private String password;
     private String firstName;
     private String lastName;
     private String email;
-    private Date created;
-    private Date updated;
+    private String status;
 
     public User toUser() {
         User user = new User();
@@ -26,23 +22,19 @@ public class UserDto {
         user.setFirstName(firstName);
         user.setLastName(lastName);
         user.setEmail(email);
-        user.setUpdated(updated);
-        user.setPassword(password);
+        user.setStatus(Status.valueOf(status));
 
         return user;
     }
 
-    public static UserDto fromUser(User user) {
-        UserDto userDto = new UserDto();
-        userDto.setId(user.getId());
-        userDto.setUsername(user.getUsername());
-        userDto.setFirstName(user.getFirstName());
-        userDto.setLastName(user.getLastName());
-        userDto.setEmail(user.getEmail());
-        userDto.setCreated(user.getCreated());
-        userDto.setUpdated(user.getUpdated());
+    public static AdminUserDto fromUser(User user) {
+        AdminUserDto adminUserDto = new AdminUserDto();
+        adminUserDto.setId(user.getId());
+        adminUserDto.setUsername(user.getUsername());
+        adminUserDto.setLastName(user.getLastName());
+        adminUserDto.setEmail(user.getEmail());
+        adminUserDto.setStatus(user.getStatus().name());
 
-        return userDto;
+        return adminUserDto;
     }
 }
-
