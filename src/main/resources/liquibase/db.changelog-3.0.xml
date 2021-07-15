@@ -1,0 +1,549 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet id="3.1" author="ItMaker">
+        <createTable tableName="rental_point">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="true"/>
+            </column>
+
+            <column name="owner" type="VARCHAR">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="title" type="VARCHAR">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="location" type="POINT">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="city_id" type="BIGINT">
+                <constraints nullable="false" />
+            </column>
+
+            <column name="street" type="VARCHAR">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="house_number" type="INTEGER">
+                <constraints nullable="false" checkConstraint="CHECK (house_number > 0)"/>
+            </column>
+
+            <column name="phone_number" type="VARCHAR">
+                <constraints nullable="false" checkConstraint="CHECK (phone_number like '^0\d{9}|\d{10}$')"/>
+            </column>
+
+            <column name="email" type="VARCHAR">
+                <constraints nullable="false" checkConstraint="CHECK (email like '^(.+)@(\S+)$')"/>
+            </column>
+        </createTable>
+    </changeSet>
+    
+    <changeSet id="3.1.1" author="ItMaker">
+        <createIndex tableName="rental_point" indexName="idx_city_id">
+            <column name="city_id"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="3.1.2" author="ItMaker">
+        <addForeignKeyConstraint baseTableName="rental_point"
+                                 baseColumnNames="city_id"
+                                 constraintName="fk_rental_point_catalog"
+                                 referencedTableName="catalog"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+
+    <changeSet id="3.1.3" author="ItMaker">
+        <addUniqueConstraint tableName="rental_point" columnNames="title"/>
+
+        <createIndex tableName="rental_point" indexName="idx_rental_point_title">
+            <column name="title"/>
+        </createIndex>
+    </changeSet>
+
+
+    <changeSet id="3.2" author="ItMaker">
+        <createTable tableName="rental_price">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="true"/>
+            </column>
+
+            <column name="title" type="VARCHAR">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="one_hour" type="DECIMAL(16,2)">
+                <constraints nullable="false" checkConstraint="CHECK (one_hour > 0)"/>
+            </column>
+
+            <column name="two_hours" type="DECIMAL(16,2)">
+                <constraints nullable="false" checkConstraint="CHECK (two_hour > 0)"/>
+            </column>
+
+            <column name="three_hours" type="DECIMAL(16,2)">
+                <constraints nullable="false" checkConstraint="CHECK (three_hour > 0)"/>
+            </column>
+
+            <column name="one_day" type="DECIMAL(16,2)">
+                <constraints nullable="false" checkConstraint="CHECK (one_day > 0)"/>
+            </column>
+
+            <column name="two_days" type="DECIMAL(16,2)">
+                <constraints nullable="false" checkConstraint="CHECK (two_days > 0)"/>
+            </column>
+
+            <column name="week" type="DECIMAL(16,2)">
+                <constraints nullable="false" checkConstraint="CHECK (week > 0)"/>
+            </column>
+
+            <column name="month" type="DECIMAL(16,2)">
+                <constraints nullable="false" checkConstraint="CHECK (month > 0)"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="3.2.1" author="ItMaker">
+        <createIndex tableName="rental_price" indexName="idx_rental_price_title">
+            <column name="title"/>
+        </createIndex>
+    </changeSet>
+
+
+    <changeSet id="3.3" author="ItMaker">
+        <createTable tableName="scooter">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="true"/>
+            </column>
+
+            <column name="brand" type="VARCHAR">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="model" type="VARCHAR">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="serial_number" type="VARCHAR">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="status" type="VARCHAR" defaultValue="AVAILABLE">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="rental_point_id" type="BIGINT">
+                <constraints nullable="false" checkConstraint="CHECK (rental_point_id = ANY(SELECT id FROM catalog))"/>
+            </column>
+
+            <column name="price_id" type="BIGINT">
+                <constraints nullable="false" checkConstraint="CHECK (price_id = ANY(SELECT id FROM rental_price))"/>
+            </column>
+
+            <column name="engine_power" type="INTEGER">
+                <constraints nullable="false" checkConstraint="CHECK (engine_power > 0)"/>
+            </column>
+
+            <column name="max_speed" type="INTEGER">
+                <constraints nullable="false" checkConstraint="CHECK (max_speed > 0)"/>
+            </column>
+
+            <column name="battery_capacity" type="DECIMAL(8, 1)">
+                <constraints nullable="false" checkConstraint="CHECK (battery_capacity >0)"/>
+            </column>
+
+            <column name="wheels_diameter" type="DECIMAL(8, 1)">
+                <constraints nullable="false" checkConstraint="CHECK (wheels_diameter >0)"/>
+            </column>
+
+            <column name="single_charge_distance" type="INTEGER">
+                <constraints nullable="false" checkConstraint="CHECK (single_charge_distance > 0)"/>
+            </column>
+
+            <column name="weight" type="DECIMAL(8, 2)">
+                <constraints nullable="false" checkConstraint="CHECK (weight > 0)"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="3.3.1" author="ItMaker">
+        <createIndex tableName="scooter" indexName="idx_rental_point_id">
+            <column name="rental_point_id"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="3.3.2" author="ItMaker">
+        <addForeignKeyConstraint baseTableName="scooter"
+                                 baseColumnNames="rental_point_id"
+                                 constraintName="fk_scooter_catalog"
+                                 referencedTableName="catalog"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+
+    <changeSet id="3.3.3" author="ItMaker">
+        <createIndex tableName="scooter" indexName="idx_scooter_model">
+            <column name="model"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="3.3.4" author="ItMaker">
+        <createIndex tableName="scooter" indexName="idx_scooter_serial_number">
+            <column name="serial_number"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="3.3.5" author="ItMaker">
+        <addForeignKeyConstraint baseTableName="scooter"
+                                 baseColumnNames="price_id"
+                                 constraintName="fk_scooter_rental_price"
+                                 referencedTableName="rental_price"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+
+    <changeSet id="3.3.6" author="ItMaker">
+        <createIndex tableName="scooter" indexName="idx_scooter_price_id">
+            <column name="price_id"/>
+        </createIndex>
+    </changeSet>
+
+
+<!--    Point values-->
+    <changeSet id="3.1.10" author="ItMaker">
+        <insert tableName="rental_point">
+            <column name="title" value="SolPoint"/>
+            <column name="owner" value="TrustGroup"/>
+            <column name="location" value="(27.525829, 52.788463)"/>
+            <column name="city_id" valueComputed="(SELECT id FROM catalog WHERE title='Salihorsk')"/>
+            <column name="street" value="Zheleznodoroznaya"/>
+            <column name="house_number" value="52"/>
+            <column name="phone_number" value="029123456123"/>
+            <column name="email" value="solpoint@gmail.com"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="3.1.11" author="ItMaker">
+        <insert tableName="rental_point">
+            <column name="title" value="MinerScooters"/>
+            <column name="owner" value="Ivanov V.V."/>
+            <column name="location" value="(27.538843, 52.783837)"/>
+            <column name="city_id" valueComputed="(SELECT id FROM catalog WHERE title='Salihorsk')"/>
+            <column name="street" value="Kazlova"/>
+            <column name="house_number" value="26"/>
+            <column name="phone_number" value="029123456123"/>
+            <column name="email" value="minerscooters@gmail.com"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="3.1.12" author="ItMaker">
+        <insert tableName="rental_point">
+            <column name="title" value="LightScooters"/>
+            <column name="owner" value="Kovalev I.N."/>
+            <column name="location" value="(27.543156, 52.777021)"/>
+            <column name="city_id" valueComputed="(SELECT id FROM catalog WHERE title='Salihorsk')"/>
+            <column name="street" value="Naberezhnaya"/>
+            <column name="house_number" value="20"/>
+            <column name="phone_number" value="029123456123"/>
+            <column name="email" value="lightscooter@gmail.com"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="3.1.13" author="ItMaker">
+        <insert tableName="rental_point">
+            <column name="title" value="SlutskScooters"/>
+            <column name="owner" value="Smirnov V.V."/>
+            <column name="location" value="(27.549762, 53.025587)"/>
+            <column name="city_id" valueComputed="(SELECT id FROM catalog WHERE title='Slutsk')"/>
+            <column name="street" value="Lenina"/>
+            <column name="house_number" value="181"/>
+            <column name="phone_number" value="029123456123"/>
+            <column name="email" value="slutskscooters@gmail.com"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="3.1.14" author="ItMaker">
+        <insert tableName="rental_point">
+            <column name="title" value="MinskScooters"/>
+            <column name="owner" value="TrustGroup"/>
+            <column name="location" value="(27.565475, 53.904076)"/>
+            <column name="city_id" valueComputed="(SELECT id FROM catalog WHERE title='Minsk')"/>
+            <column name="street" value="Prospect Nezavisimosti"/>
+            <column name="house_number" value="29"/>
+            <column name="phone_number" value="029123456123"/>
+            <column name="email" value="minskscooters@gmail.com"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="3.1.15" author="ItMaker">
+        <insert tableName="rental_point">
+            <column name="title" value="RichPoint"/>
+            <column name="owner" value="Maslov K.K."/>
+            <column name="location" value="(27.568861, 53.910289)"/>
+            <column name="city_id" valueComputed="(SELECT id FROM catalog WHERE title='Minsk')"/>
+            <column name="street" value="Komunisticheskaya"/>
+            <column name="house_number" value="10"/>
+            <column name="phone_number" value="029123456123"/>
+            <column name="email" value="richpoint@gmail.com"/>
+        </insert>
+    </changeSet>
+
+
+<!--    Price values-->
+    <changeSet id="3.2.10" author="ItMaker">
+        <insert tableName="rental_price">
+            <column name="title" value="low"/>
+            <column name="one_hour" value="15.0"/>
+            <column name="two_hours" value="20.0"/>
+            <column name="three_hours" value="25.0"/>
+            <column name="one_day" value="30.0"/>
+            <column name="two_days" value="55"/>
+            <column name="week" value="160"/>
+            <column name="month" value="300"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="3.2.11" author="ItMaker">
+        <insert tableName="rental_price">
+            <column name="title" value="medium"/>
+            <column name="one_hour" value="20.0"/>
+            <column name="two_hours" value="25.0"/>
+            <column name="three_hours" value="35.0"/>
+            <column name="one_day" value="40.0"/>
+            <column name="two_days" value="65"/>
+            <column name="week" value="180"/>
+            <column name="month" value="320"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="3.2.12" author="ItMaker">
+        <insert tableName="rental_price">
+            <column name="title" value="expensive"/>
+            <column name="one_hour" value="25.0"/>
+            <column name="two_hours" value="40.0"/>
+            <column name="three_hours" value="50.0"/>
+            <column name="one_day" value="65.0"/>
+            <column name="two_days" value="85"/>
+            <column name="week" value="200"/>
+            <column name="month" value="350"/>
+        </insert>
+    </changeSet>
+
+
+<!--    Scooter values-->
+    <changeSet id="3.3.10" author="ItMaker">
+        <insert tableName="scooter">
+            <column name="brand" value="Xiaomi"/>
+            <column name="model" value="Mi Electric Scooter Pro 2"/>
+            <column name="serial_number" value="MIESP211A22"/>
+            <column name="rental_point_id" valueComputed="(SELECT id FROM rental_point WHERE title='SolPoint')"/>
+            <column name="price_id" valueComputed="(SELECT id FROM rental_price WHERE title='medium')"/>
+            <column name="engine_power" value="300"/>
+            <column name="max_speed" value="25"/>
+            <column name="battery_capacity" value="12.8"/>
+            <column name="wheels_diameter" value="8.5"/>
+            <column name="single_charge_distance" value="45"/>
+            <column name="weight" value="14.2"/>
+        </insert>
+    </changeSet>
+
+
+    <changeSet id="3.3.11" author="ItMaker">
+        <insert tableName="scooter">
+            <column name="brand" value="Xiaomi"/>
+            <column name="model" value="Mi Electric Scooter 1S"/>
+            <column name="serial_number" value="MIES11A22"/>
+            <column name="rental_point_id" valueComputed="(SELECT id FROM rental_point WHERE title='SolPoint')"/>
+            <column name="price_id" valueComputed="(SELECT id FROM rental_price WHERE title='low')"/>
+            <column name="engine_power" value="250"/>
+            <column name="max_speed" value="25"/>
+            <column name="battery_capacity" value="7.8"/>
+            <column name="wheels_diameter" value="8.5"/>
+            <column name="single_charge_distance" value="30"/>
+            <column name="weight" value="12.5"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="3.3.12" author="ItMaker">
+        <insert tableName="scooter">
+            <column name="brand" value="Kugoo"/>
+            <column name="model" value="S3 Pro"/>
+            <column name="serial_number" value="KGS3P1122"/>
+            <column name="rental_point_id" valueComputed="(SELECT id FROM rental_point WHERE title='SolPoint')"/>
+            <column name="price_id" valueComputed="(SELECT id FROM rental_price WHERE title='low')"/>
+            <column name="engine_power" value="250"/>
+            <column name="max_speed" value="35"/>
+            <column name="battery_capacity" value="7.8"/>
+            <column name="wheels_diameter" value="8.5"/>
+            <column name="single_charge_distance" value="30"/>
+            <column name="weight" value="12.0"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="3.3.13" author="ItMaker">
+        <insert tableName="scooter">
+            <column name="brand" value="Kugoo"/>
+            <column name="model" value="M5"/>
+            <column name="serial_number" value="KGM51123"/>
+            <column name="rental_point_id" valueComputed="(SELECT id FROM rental_point WHERE title='SolPoint')"/>
+            <column name="price_id" valueComputed="(SELECT id FROM rental_price WHERE title='expensive')"/>
+            <column name="engine_power" value="1000"/>
+            <column name="max_speed" value="50"/>
+            <column name="battery_capacity" value="21.0"/>
+            <column name="wheels_diameter" value="10.0"/>
+            <column name="single_charge_distance" value="50"/>
+            <column name="weight" value="31.5"/>
+        </insert>
+    </changeSet>
+
+
+    <changeSet id="3.3.14" author="ItMaker">
+        <insert tableName="scooter">
+            <column name="brand" value="Xiaomi"/>
+            <column name="model" value="Mi Electric Scooter Pro 2"/>
+            <column name="serial_number" value="MIESP211A23"/>
+            <column name="rental_point_id" valueComputed="(SELECT id FROM rental_point WHERE title='MinerScooters')"/>
+            <column name="price_id" valueComputed="(SELECT id FROM rental_price WHERE title='medium')"/>
+            <column name="engine_power" value="300"/>
+            <column name="max_speed" value="25"/>
+            <column name="battery_capacity" value="12.8"/>
+            <column name="wheels_diameter" value="8.5"/>
+            <column name="single_charge_distance" value="45"/>
+            <column name="weight" value="14.2"/>
+        </insert>
+    </changeSet>
+
+
+    <changeSet id="3.3.15" author="ItMaker">
+        <insert tableName="scooter">
+            <column name="brand" value="Xiaomi"/>
+            <column name="model" value="Mi Electric Scooter 1S"/>
+            <column name="serial_number" value="MIES11A23"/>
+            <column name="rental_point_id" valueComputed="(SELECT id FROM rental_point WHERE title='MinerScooters')"/>
+            <column name="price_id" valueComputed="(SELECT id FROM rental_price WHERE title='low')"/>
+            <column name="engine_power" value="250"/>
+            <column name="max_speed" value="25"/>
+            <column name="battery_capacity" value="7.8"/>
+            <column name="wheels_diameter" value="8.5"/>
+            <column name="single_charge_distance" value="30"/>
+            <column name="weight" value="12.5"/>
+        </insert>
+    </changeSet>
+
+
+    <changeSet id="3.3.20" author="ItMaker">
+        <insert tableName="scooter">
+            <column name="brand" value="Xiaomi"/>
+            <column name="model" value="Mi Electric Scooter Pro 2"/>
+            <column name="serial_number" value="MIESP211A24"/>
+            <column name="rental_point_id" valueComputed="(SELECT id FROM rental_point WHERE title='SlutskScooters')"/>
+            <column name="price_id" valueComputed="(SELECT id FROM rental_price WHERE title='medium')"/>
+            <column name="engine_power" value="300"/>
+            <column name="max_speed" value="25"/>
+            <column name="battery_capacity" value="12.8"/>
+            <column name="wheels_diameter" value="8.5"/>
+            <column name="single_charge_distance" value="45"/>
+            <column name="weight" value="14.2"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="3.3.21" author="ItMaker">
+        <insert tableName="scooter">
+            <column name="brand" value="Kugoo"/>
+            <column name="model" value="S3 Pro"/>
+            <column name="serial_number" value="KGS3P1124"/>
+            <column name="rental_point_id" valueComputed="(SELECT id FROM rental_point WHERE title='SlutskScooters')"/>
+            <column name="price_id" valueComputed="(SELECT id FROM rental_price WHERE title='low')"/>
+            <column name="engine_power" value="250"/>
+            <column name="max_speed" value="35"/>
+            <column name="battery_capacity" value="7.8"/>
+            <column name="wheels_diameter" value="8.5"/>
+            <column name="single_charge_distance" value="30"/>
+            <column name="weight" value="12.0"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="3.3.22" author="ItMaker">
+        <insert tableName="scooter">
+            <column name="brand" value="Kugoo"/>
+            <column name="model" value="M5"/>
+            <column name="serial_number" value="KGM51124"/>
+            <column name="rental_point_id" valueComputed="(SELECT id FROM rental_point WHERE title='SlutskScooters')"/>
+            <column name="price_id" valueComputed="(SELECT id FROM rental_price WHERE title='expensive')"/>
+            <column name="engine_power" value="1000"/>
+            <column name="max_speed" value="50"/>
+            <column name="battery_capacity" value="21.0"/>
+            <column name="wheels_diameter" value="10.0"/>
+            <column name="single_charge_distance" value="50"/>
+            <column name="weight" value="31.5"/>
+        </insert>
+    </changeSet>
+
+
+    <changeSet id="3.3.50" author="ItMaker">
+        <insert tableName="scooter">
+            <column name="brand" value="Xiaomi"/>
+            <column name="model" value="Mi Electric Scooter Pro 2"/>
+            <column name="serial_number" value="MIESP211A25"/>
+            <column name="rental_point_id" valueComputed="(SELECT id FROM rental_point WHERE title='MinskScooters')"/>
+            <column name="price_id" valueComputed="(SELECT id FROM rental_price WHERE title='medium')"/>
+            <column name="engine_power" value="300"/>
+            <column name="max_speed" value="25"/>
+            <column name="battery_capacity" value="12.8"/>
+            <column name="wheels_diameter" value="8.5"/>
+            <column name="single_charge_distance" value="45"/>
+            <column name="weight" value="14.2"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="3.3.51" author="ItMaker">
+        <insert tableName="scooter">
+            <column name="brand" value="Kugoo"/>
+            <column name="model" value="S3 Pro"/>
+            <column name="serial_number" value="KGS3P1125"/>
+            <column name="rental_point_id" valueComputed="(SELECT id FROM rental_point WHERE title='MinskScooters')"/>
+            <column name="price_id" valueComputed="(SELECT id FROM rental_price WHERE title='low')"/>
+            <column name="engine_power" value="250"/>
+            <column name="max_speed" value="35"/>
+            <column name="battery_capacity" value="7.8"/>
+            <column name="wheels_diameter" value="8.5"/>
+            <column name="single_charge_distance" value="30"/>
+            <column name="weight" value="12.0"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="3.3.52" author="ItMaker">
+        <insert tableName="scooter">
+            <column name="brand" value="Kugoo"/>
+            <column name="model" value="M5"/>
+            <column name="serial_number" value="KGM51125"/>
+            <column name="rental_point_id" valueComputed="(SELECT id FROM rental_point WHERE title='MinskScooters')"/>
+            <column name="price_id" valueComputed="(SELECT id FROM rental_price WHERE title='expensive')"/>
+            <column name="engine_power" value="1000"/>
+            <column name="max_speed" value="50"/>
+            <column name="battery_capacity" value="21.0"/>
+            <column name="wheels_diameter" value="10.0"/>
+            <column name="single_charge_distance" value="50"/>
+            <column name="weight" value="31.5"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="3.3.53" author="ItMaker">
+        <insert tableName="scooter">
+            <column name="brand" value="White Siberia"/>
+            <column name="model" value="CityCoco WS-PRO"/>
+            <column name="serial_number" value="WSCCWSP11"/>
+            <column name="rental_point_id" valueComputed="(SELECT id FROM rental_point WHERE title='MinskScooters')"/>
+            <column name="price_id" valueComputed="(SELECT id FROM rental_price WHERE title='expensive')"/>
+            <column name="engine_power" value="2500"/>
+            <column name="max_speed" value="55"/>
+            <column name="battery_capacity" value="21.0"/>
+            <column name="wheels_diameter" value="10.0"/>
+            <column name="single_charge_distance" value="50"/>
+            <column name="weight" value="87.0"/>
+        </insert>
+    </changeSet>
+
+
+</databaseChangeLog>

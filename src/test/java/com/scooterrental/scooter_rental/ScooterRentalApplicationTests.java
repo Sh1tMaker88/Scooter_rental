@@ -8,8 +8,8 @@ class ScooterRentalApplicationTests {
 
     //see TESTCONTAINERS for test dao layer
 
-    @Test
-    void contextLoads() {
-    }
+//    @Test
+//    void contextLoads() {
+//    }
 
 }

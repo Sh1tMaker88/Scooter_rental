@@ -1,0 +1,114 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet id="2.0" author="ItMaker">
+        <createTable tableName="catalog">
+            <column name="id" type="INTEGER" autoIncrement="true">
+                <constraints primaryKey="true" nullable="true"/>
+            </column>
+
+            <column name="title" type="varchar(100)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="parent_id" type="INTEGER">
+                <constraints checkConstraint="CHECK (parent_id IS NULL) OR (parent_id = ANY(SELECT id FROM catalog)"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="2.1" author="ItMaker">
+        <insert tableName="catalog">
+            <column name="title" value="Belarus"/>
+
+            <column name="parent_id" value="null"/>
+        </insert>
+    </changeSet>
+
+
+<!--    Regions-->
+    <changeSet id="2.2.1" author="ItMaker">
+        <insert tableName="catalog">
+            <column name="title" value="Brest Region"/>
+
+            <column name="parent_id" valueComputed="(SELECT id FROM catalog WHERE title='Belarus')"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="2.2.2" author="ItMaker">
+        <insert tableName="catalog">
+            <column name="title" value="Gomel Region"/>
+
+            <column name="parent_id" valueComputed="(SELECT id FROM catalog WHERE title='Belarus')"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="2.2.3" author="ItMaker">
+        <insert tableName="catalog">
+            <column name="title" value="Grodno Region"/>
+
+            <column name="parent_id" valueComputed="(SELECT id FROM catalog WHERE title='Belarus')"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="2.2.4" author="ItMaker">
+        <insert tableName="catalog">
+            <column name="title" value="Mogilev Region"/>
+
+            <column name="parent_id" valueComputed="(SELECT id FROM catalog WHERE title='Belarus')"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="2.2.5" author="ItMaker">
+        <insert tableName="catalog">
+            <column name="title" value="Minsk Region"/>
+
+            <column name="parent_id" valueComputed="(SELECT id FROM catalog WHERE title='Belarus')"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="2.2.6" author="ItMaker">
+        <insert tableName="catalog">
+            <column name="title" value="Vitebsk Region"/>
+
+            <column name="parent_id" valueComputed="(SELECT id FROM catalog WHERE title='Belarus')"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="2.2.7" author="ItMaker">
+        <insert tableName="catalog">
+            <column name="title" value="Minsk"/>
+
+            <column name="parent_id" valueComputed="(SELECT id FROM catalog WHERE title='Belarus')"/>
+        </insert>
+    </changeSet>
+
+
+<!--    Cities-->
+    <changeSet id="2.3.1" author="ItMaker">
+        <insert tableName="catalog">
+            <column name="title" value="Salihorsk"/>
+
+            <column name="parent_id" valueComputed="(SELECT id FROM catalog WHERE title='Minsk Region')"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="2.3.2" author="ItMaker">
+        <insert tableName="catalog">
+            <column name="title" value="Slutsk"/>
+
+            <column name="parent_id" valueComputed="(SELECT id FROM catalog WHERE title='Minsk Region')"/>
+        </insert>
+    </changeSet>
+
+</databaseChangeLog>
+
+<!--        Получение непосредственных потомков-->
+<!--        SELECT “ID” FROM CATALOG WHERE “PARENT_ID” = <значение id родителя>-->
+
+<!--        Получение всех потомков-->
+<!--        select "ID",'1' as "LEVEL" from CATALOG3_LEVEL2 where PARENT_ID = 1-->
+<!--        union-->
+<!--        select "ID",'2' as "LEVEL" from CATALOG3_LEVEL3 where PARENT_ID = 1-->
