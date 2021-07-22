@@ -102,6 +102,12 @@
             <column name="parent_id" valueComputed="(SELECT id FROM catalog WHERE title='Minsk Region')"/>
         </insert>
     </changeSet>
+    
+    <changeSet id="2.0.1" author="ItMaker">
+        <modifyDataType tableName="catalog" columnName="id" newDataType="BIGINT"/>
+
+        <modifyDataType tableName="catalog" columnName="parent_id" newDataType="BIGINT"/>
+    </changeSet>
 
 </databaseChangeLog>
 

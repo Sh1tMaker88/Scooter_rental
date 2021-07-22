@@ -2,6 +2,7 @@ package com.scooterrental.scooter_rental.configuration;
 
 import com.scooterrental.scooter_rental.security.jwt.JwtConfigurer;
 import com.scooterrental.scooter_rental.security.jwt.JwtTokenProvider;
+import org.n52.jackson.datatype.jts.JtsModule;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -46,5 +47,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .anyRequest().authenticated()
             .and()
                 .apply(new JwtConfigurer(jwtTokenProvider));
+    }
+
+    @Bean
+    public JtsModule jtsModule(){
+        return new JtsModule();
     }
 }

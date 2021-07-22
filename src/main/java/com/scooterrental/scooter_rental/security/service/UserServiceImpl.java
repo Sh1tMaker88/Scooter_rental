@@ -83,11 +83,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public void deleteUser(Long userId) {
         if (userRepository.findById(userId).isEmpty()) {
-            log.warn("IN delete - no such user with id: {} in database", userId);
+            log.warn("IN deleteUser - no such user with id: {} in database", userId);
             throw new ServiceException("No user with id: " + userId + " in database");
         }
         userRepository.deleteById(userId);
-        log.info("IN delete - user with id: {} successfully deleted", userId);
+        log.info("IN deleteUser - user with id: {} successfully deleted", userId);
     }
 
     @Override

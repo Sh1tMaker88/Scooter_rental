@@ -5,6 +5,7 @@ import lombok.Setter;
 import org.springframework.hateoas.RepresentationModel;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,7 +13,7 @@ import java.util.List;
 @Getter
 @Setter
 @Table(name = "catalog")
-public class Catalog extends RepresentationModel<Catalog> {
+public class Catalog extends RepresentationModel<Catalog> implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,14 +27,16 @@ public class Catalog extends RepresentationModel<Catalog> {
     private Long parentId;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "city")
-    private List<RentalPoint> rentalPoints;
+    private List<RentalPoint> rentalPoints = new ArrayList<>();
 
-    public void addRentalPointToCatalogItem(RentalPoint rentalPoint) {
-        if (rentalPoints == null) {
-            rentalPoints = new ArrayList<>();
-        }
+    public void addRentalPoint(RentalPoint rentalPoint) {
         rentalPoints.add(rentalPoint);
         rentalPoint.setCity(this);
+    }
+
+    public void removeRentalPoint(RentalPoint rentalPoint) {
+        rentalPoints.remove(rentalPoint);
+        rentalPoint.setCity(null);
     }
 
     @Override

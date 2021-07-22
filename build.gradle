@@ -13,6 +13,12 @@ configurations {
         extendsFrom annotationProcessor
     }
 }
+//todo
+gradle.projectsEvaluated {
+    tasks.withType(JavaCompile) {
+        options.compilerArgs << "-parameters"
+    }
+}
 
 repositories {
     mavenCentral()
@@ -27,6 +33,11 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-hateoas'
     implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity5'
     implementation group: 'io.jsonwebtoken', name: 'jjwt', version: '0.9.1'
+    implementation 'org.hibernate:hibernate-spatial'
+//    implementation group: 'org.locationtech.jts', name: 'jts-core', version: '1.18.1'
+    implementation 'org.n52.jackson:jackson-datatype-jts:1.2.9'
+
+
     compileOnly 'org.projectlombok:lombok'
     compileOnly 'org.liquibase:liquibase-core'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
@@ -34,6 +45,8 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
+    implementation group: 'org.mapstruct', name: 'mapstruct', version: '1.4.2.Final'
+    annotationProcessor 'org.mapstruct:mapstruct-processor:1.4.2.Final'
 }
 
 test {

@@ -1,7 +1,9 @@
 package com.scooterrental.scooter_rental.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.hateoas.RepresentationModel;
 
 import javax.persistence.*;
 import java.util.List;
@@ -10,7 +12,7 @@ import java.util.List;
 @Getter
 @Setter
 @Table(name = "rental_price")
-public class RentalPrice {
+public class RentalPrice extends RepresentationModel<RentalPrice> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,6 +22,7 @@ public class RentalPrice {
     @Column(name = "title")
     private String title;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "rentalPrice")
     private List<Scooter> scooter;
 

@@ -209,6 +209,10 @@
         </createIndex>
     </changeSet>
 
+<!--    <changeSet id="3.3.7(drop_nullable_price_constraint)" author="ItMaker">-->
+<!--        <dropNotNullConstraint tableName="scooter" columnName="price_id"/>-->
+<!--    </changeSet>-->
+
 
 <!--    Point values-->
     <changeSet id="3.1.10" author="ItMaker">
@@ -288,7 +292,11 @@
             <column name="email" value="richpoint@gmail.com"/>
         </insert>
     </changeSet>
-
+    
+    <changeSet id="3.1.20(change_pointToGeometry" author="ItMaker">
+        <modifyDataType tableName="rental_point" columnName="location" newDataType="GEOMETRY"/>
+    </changeSet>
+    
 
 <!--    Price values-->
     <changeSet id="3.2.10" author="ItMaker">
