@@ -1,7 +1,9 @@
 package com.scooterrental.scooter_rental.controller;
 
 import com.scooterrental.scooter_rental.model.RentalPrice;
+import com.scooterrental.scooter_rental.model.Scooter;
 import com.scooterrental.scooter_rental.service.RentalPriceService;
+import com.scooterrental.scooter_rental.service.ScooterService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -16,9 +18,11 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 public class RentalPriceController {
 
     private final RentalPriceService rentalPriceService;
+    private final ScooterService scooterService;
 
-    public RentalPriceController(RentalPriceService rentalPriceService) {
+    public RentalPriceController(RentalPriceService rentalPriceService, ScooterService scooterService) {
         this.rentalPriceService = rentalPriceService;
+        this.scooterService = scooterService;
     }
 
     @GetMapping("/rental_points/{country}/{region}/{city}/{rentalPointId}/scooters/{scooterId}/{priceId}")
@@ -30,14 +34,18 @@ public class RentalPriceController {
                                                                @PathVariable Long priceId) {
         RentalPrice rentalPrice = rentalPriceService.getRentalPriceById(priceId);
         rentalPrice.add(linkTo(methodOn(RentalPriceController.class)
-                .deleteRentalPrice(priceId))
-                .withRel("delete_rental_price")
-                .withType("DELETE"));
+                .setPriceForScooter(country, region, city, rentalPointId, scooterId, priceId))
+                .withRel("update_this_rental_price")
+                .withType("PUT"));
+        rentalPrice.add(linkTo(RentalPriceController.class)
+                .slash("/rental_points/" + country + "/" +  region + "/" + city + "/" +
+                        rentalPointId + "/scooters/" + scooterId + "/price")
+                .withRel("set_new_rental_price_for_this_scooter")
+                .withType("PUT"));
         rentalPrice.add(linkTo(RentalPriceController.class)
                 .slash("rental_price")
-                .withRel("add_rental_price_set")
+                .withRel("add_new_rental_price_set")
                 .withType("POST"));
-        //todo add drop rental price link
 
         return ResponseEntity.ok(rentalPrice);
     }
@@ -92,14 +100,27 @@ public class RentalPriceController {
         return ResponseEntity.ok(price);
     }
 
-//    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-//    @PutMapping("/{country}/{region}/{city}/{rentalPointId}/scooters/{scooterId}")
-//    public ResponseEntity<RentalPrice> updateRentalPriceForScooter(@PathVariable String country,
-//                                                                        @PathVariable String region,
-//                                                                        @PathVariable String city,
-//                                                                        @PathVariable Long rentalPointId,
-//                                                                        @PathVariable Long scooterId) {
-//
-//
-//    }
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PutMapping("/rental_points/{country}/{region}/{city}/{rentalPointId}/scooters/{scooterId}/{priceId}")
+    public ResponseEntity<Scooter> setPriceForScooter(@PathVariable String country,
+                                                      @PathVariable String region,
+                                                      @PathVariable String city,
+                                                      @PathVariable Long rentalPointId,
+                                                      @PathVariable Long scooterId,
+                                                      @PathVariable Long priceId) {
+        Scooter scooter = rentalPriceService.setPriceForScooterByPriceId(priceId, scooterId);
+        return ResponseEntity.ok(scooterService.saveScooter(scooter));
+    }
+
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PutMapping("/rental_points/{country}/{region}/{city}/{rentalPointId}/scooters/{scooterId}/price")
+    public ResponseEntity<Scooter> setNewPriceSetForScooter(@PathVariable String country,
+                                                            @PathVariable String region,
+                                                            @PathVariable String city,
+                                                            @PathVariable Long rentalPointId,
+                                                            @PathVariable Long scooterId,
+                                                            @RequestBody RentalPrice rentalPrice) {
+        Scooter scooter = rentalPriceService.setNewRentalPriceToScooter(rentalPrice, scooterId);
+        return ResponseEntity.ok(scooter);
+    }
 }

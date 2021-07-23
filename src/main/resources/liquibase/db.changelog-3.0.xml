@@ -209,9 +209,9 @@
         </createIndex>
     </changeSet>
 
-<!--    <changeSet id="3.3.7(drop_nullable_price_constraint)" author="ItMaker">-->
-<!--        <dropNotNullConstraint tableName="scooter" columnName="price_id"/>-->
-<!--    </changeSet>-->
+    <changeSet id="3.3.7(drop_nullable_price_constraint)" author="ItMaker">
+        <dropNotNullConstraint tableName="scooter" columnName="price_id"/>
+    </changeSet>
 
 
 <!--    Point values-->

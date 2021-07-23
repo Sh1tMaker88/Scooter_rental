@@ -62,6 +62,8 @@ public class ScooterController {
                         scooter.getRentalPrice().getId()))
                 .withSelfRel()
                 .withType("GET"));
+        //todo link to update
+//        scooter.add(linkTo())
         scooter.add(linkTo(methodOn(ScooterController.class)
                 .deleteScooter(country, region, city, rentalPointId, scooterId))
                 .withRel("delete_scooter")
@@ -70,9 +72,9 @@ public class ScooterController {
                 .getRentalPointRepresentation(country, region, city, rentalPointId))
                 .withRel("to_rental_point")
                 .withType("GET"));
-//        scooter.add(linkTo(methodOn()))
 
-                //todo link to update
+
+
 
         return ResponseEntity.ok(scooter);
     }
@@ -93,12 +95,12 @@ public class ScooterController {
 
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @PutMapping("/{country}/{region}/{city}/{rentalPointId}/scooters/{scooterId}")
-    public ResponseEntity<Scooter> addScooter(@PathVariable String country,
-                                              @PathVariable String region,
-                                              @PathVariable String city,
-                                              @PathVariable Long rentalPointId,
-                                              @PathVariable Long scooterId,
-                                              @RequestBody Scooter scooter) {
+    public ResponseEntity<Scooter> updateScooter(@PathVariable String country,
+                                                 @PathVariable String region,
+                                                 @PathVariable String city,
+                                                 @PathVariable Long rentalPointId,
+                                                 @PathVariable Long scooterId,
+                                                 @RequestBody Scooter scooter) {
         scooter.setRentalPoint(rentalPointService.getRentalPointById(rentalPointId));
         scooter.setId(scooterId);
         Scooter scooterFromDB = scooterService.saveScooter(scooter);
@@ -117,4 +119,6 @@ public class ScooterController {
 
         return ResponseEntity.status(HttpStatus.OK).build();
     }
+
+
 }

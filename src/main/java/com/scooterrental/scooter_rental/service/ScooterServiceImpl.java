@@ -29,19 +29,23 @@ public class ScooterServiceImpl implements ScooterService {
     @Override
     public List<Scooter> getAllScooters(Long rentalPointId) {
         if (rentalPointRepository.getRentalPointById(rentalPointId).isEmpty()) {
+            log.warn("IN getAllScooters - no such rental point with ID={}", rentalPointId);
             throw new ServiceException("No such rental point with ID=" + rentalPointId);
         }
-
-        return scooterRepository.findAllByRentalPointId(rentalPointId);
+        List<Scooter> scooterList = scooterRepository.findAllByRentalPointId(rentalPointId);
+        log.info("IN getAllScooters - {} scooter were found", scooterList.size());
+        return scooterList;
     }
 
     @Override
     public Scooter getScooterById(Long scooterId) {
         if (scooterRepository.getScooterById(scooterId).isEmpty()) {
+            log.warn("IN getScooterById - no such scooter with ID={}", scooterId);
             throw new ServiceException("No such scooter with ID=" + scooterId);
         }
-
-        return scooterRepository.getScooterById(scooterId).get();
+        Scooter scooter = scooterRepository.getScooterById(scooterId).get();
+        log.info("IN getScooterById - scooter with ID={} successfully loaded", scooterId);
+        return scooter;
     }
 
     @Override
@@ -50,14 +54,14 @@ public class ScooterServiceImpl implements ScooterService {
             log.warn("IN deleteScooterByID - no such scooter with ID={}", scooterId);
             throw new ServiceException("No such scooter with ID=" + scooterId);
         }
-
         scooterRepository.deleteScooterById(scooterId);
         log.info("IN deleteScooterByID - scooter with ID={} successfully deleted", scooterId);
     }
 
     @Override
     public Scooter saveScooter(Scooter scooter) {
-
-        return scooterRepository.save(scooter);
+        Scooter savedScooter = scooterRepository.save(scooter);
+        log.info("IN saveScooter - scooter with serial number {} successfully saved", savedScooter.getSerialNumber());
+        return savedScooter;
     }
 }
