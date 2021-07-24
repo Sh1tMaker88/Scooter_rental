@@ -3,9 +3,9 @@
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
-    <changeSet id="2.0" author="ItMaker">
+    <changeSet id="2.0(create_catalog)" author="ItMaker">
         <createTable tableName="catalog">
-            <column name="id" type="INTEGER" autoIncrement="true">
+            <column name="id" type="BIGINT" autoIncrement="true">
                 <constraints primaryKey="true" nullable="true"/>
             </column>
 
@@ -13,13 +13,13 @@
                 <constraints nullable="false"/>
             </column>
 
-            <column name="parent_id" type="INTEGER">
+            <column name="parent_id" type="BIGINT">
                 <constraints checkConstraint="CHECK (parent_id IS NULL) OR (parent_id = ANY(SELECT id FROM catalog)"/>
             </column>
         </createTable>
     </changeSet>
 
-    <changeSet id="2.1" author="ItMaker">
+    <changeSet id="2.1(insert_catalog)" author="ItMaker">
         <insert tableName="catalog">
             <column name="title" value="Belarus"/>
 
@@ -27,9 +27,13 @@
         </insert>
     </changeSet>
 
+    <changeSet id="2.2(add_unique_catalog_title)" author="ItMaker">
+        <addUniqueConstraint tableName="catalog" columnNames="title"/>
+    </changeSet>
+
 
 <!--    Regions-->
-    <changeSet id="2.2.1" author="ItMaker">
+    <changeSet id="2.2.1(insert_catalog)" author="ItMaker">
         <insert tableName="catalog">
             <column name="title" value="Brest Region"/>
 
@@ -37,7 +41,7 @@
         </insert>
     </changeSet>
 
-    <changeSet id="2.2.2" author="ItMaker">
+    <changeSet id="2.2.2(insert_catalog)" author="ItMaker">
         <insert tableName="catalog">
             <column name="title" value="Gomel Region"/>
 
@@ -45,7 +49,7 @@
         </insert>
     </changeSet>
 
-    <changeSet id="2.2.3" author="ItMaker">
+    <changeSet id="2.2.3(insert_catalog)" author="ItMaker">
         <insert tableName="catalog">
             <column name="title" value="Grodno Region"/>
 
@@ -53,7 +57,7 @@
         </insert>
     </changeSet>
 
-    <changeSet id="2.2.4" author="ItMaker">
+    <changeSet id="2.2.4(insert_catalog)" author="ItMaker">
         <insert tableName="catalog">
             <column name="title" value="Mogilev Region"/>
 
@@ -61,7 +65,7 @@
         </insert>
     </changeSet>
 
-    <changeSet id="2.2.5" author="ItMaker">
+    <changeSet id="2.2.5(insert_catalog)" author="ItMaker">
         <insert tableName="catalog">
             <column name="title" value="Minsk Region"/>
 
@@ -69,7 +73,7 @@
         </insert>
     </changeSet>
 
-    <changeSet id="2.2.6" author="ItMaker">
+    <changeSet id="2.2.6(insert_catalog)" author="ItMaker">
         <insert tableName="catalog">
             <column name="title" value="Vitebsk Region"/>
 
@@ -77,7 +81,7 @@
         </insert>
     </changeSet>
 
-    <changeSet id="2.2.7" author="ItMaker">
+    <changeSet id="2.2.7(insert_catalog)" author="ItMaker">
         <insert tableName="catalog">
             <column name="title" value="Minsk"/>
 
@@ -87,7 +91,7 @@
 
 
 <!--    Cities-->
-    <changeSet id="2.3.1" author="ItMaker">
+    <changeSet id="2.3.1(insert_catalog)" author="ItMaker">
         <insert tableName="catalog">
             <column name="title" value="Salihorsk"/>
 
@@ -95,26 +99,12 @@
         </insert>
     </changeSet>
 
-    <changeSet id="2.3.2" author="ItMaker">
+    <changeSet id="2.3.2(insert_catalog)" author="ItMaker">
         <insert tableName="catalog">
             <column name="title" value="Slutsk"/>
 
             <column name="parent_id" valueComputed="(SELECT id FROM catalog WHERE title='Minsk Region')"/>
         </insert>
     </changeSet>
-    
-    <changeSet id="2.0.1" author="ItMaker">
-        <modifyDataType tableName="catalog" columnName="id" newDataType="BIGINT"/>
-
-        <modifyDataType tableName="catalog" columnName="parent_id" newDataType="BIGINT"/>
-    </changeSet>
 
 </databaseChangeLog>
-
-<!--        Получение непосредственных потомков-->
-<!--        SELECT “ID” FROM CATALOG WHERE “PARENT_ID” = <значение id родителя>-->
-
-<!--        Получение всех потомков-->
-<!--        select "ID",'1' as "LEVEL" from CATALOG3_LEVEL2 where PARENT_ID = 1-->
-<!--        union-->
-<!--        select "ID",'2' as "LEVEL" from CATALOG3_LEVEL3 where PARENT_ID = 1-->

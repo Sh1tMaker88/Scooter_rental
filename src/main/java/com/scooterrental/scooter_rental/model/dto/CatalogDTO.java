@@ -7,15 +7,19 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.hateoas.RepresentationModel;
 
+import java.io.Serializable;
+
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class CatalogDTO extends RepresentationModel<CatalogDTO> {
+public class CatalogDTO extends RepresentationModel<CatalogDTO> implements Serializable {
 
     @JsonProperty("id")
     private Long id;
 
     @JsonProperty("title")
     private String title;
+
+
 }

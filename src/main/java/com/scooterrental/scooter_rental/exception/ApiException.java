@@ -15,21 +15,22 @@ import java.util.List;
 public class ApiException {
     private LocalDateTime whenExceptionHappen;
     private String message;
-    private String debugMessage;
+    private String details;
     private Throwable cause;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private List<String> errors;
 
-    public ApiException(String message, String debugMessage) {
+    public ApiException(String message, String details) {
         this.whenExceptionHappen = LocalDateTime.now();
         this.message = message;
-        this.debugMessage = debugMessage;
+        this.details = details;
     }
 
-    public ApiException(String message, Throwable cause) {
+    public ApiException(String message, String details, Throwable cause) {
         this.whenExceptionHappen = LocalDateTime.now();
         this.message = message;
+        this.details = details;
         this.cause = cause;
     }
 }

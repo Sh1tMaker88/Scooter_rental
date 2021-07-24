@@ -3,6 +3,7 @@ package com.scooterrental.scooter_rental.service;
 import com.scooterrental.scooter_rental.exception.ServiceException;
 import com.scooterrental.scooter_rental.model.RentalPoint;
 import com.scooterrental.scooter_rental.repository.RentalPointRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -11,6 +12,7 @@ import java.util.Optional;
 
 @Service
 @Transactional
+@Slf4j
 public class RentalPointServiceImpl implements RentalPointService {
 
     private final RentalPointRepository rentalPointRepository;
@@ -21,35 +23,44 @@ public class RentalPointServiceImpl implements RentalPointService {
 
     @Override
     public List<RentalPoint> findAllRentalPointsByCityId(Long cityId) {
-        return rentalPointRepository.findAllByCityId(cityId);
+        List<RentalPoint> rentalPointList = rentalPointRepository.findAllByCityId(cityId);
+        log.info("IN findAllRentalPointsByCityId - found {} rental points", rentalPointList.size());
+        return rentalPointList;
     }
 
     @Override
     public Integer countRentalPointByCityId(Long cityId) {
-        return rentalPointRepository.countRentalPointByCityId(cityId);
+        Integer rentalPointByCityId = rentalPointRepository.countRentalPointByCityId(cityId);
+        log.info("IN countRentalPointByCityId - in city with ID={} found {} rental points", cityId, rentalPointByCityId);
+        return rentalPointByCityId;
     }
 
     @Override
     public RentalPoint getRentalPointById(Long rentalPointId) {
         if (rentalPointRepository.getRentalPointById(rentalPointId).isEmpty()) {
+            log.warn("IN getRentalPointById - no such rental point with ID={}", rentalPointId);
             throw new ServiceException("No such rental point with ID=" + rentalPointId);
         }
-
-        return rentalPointRepository.getRentalPointById(rentalPointId).get();
+        RentalPoint rentalPoint = rentalPointRepository.getRentalPointById(rentalPointId).get();
+        log.info("IN getRentalPointById - found rental point with ID={}", rentalPointId);
+        return rentalPoint;
     }
 
     @Override
     public RentalPoint saveRentalPoint(RentalPoint rentalPoint) {
-
-        return rentalPointRepository.save(rentalPoint);
+        RentalPoint savedRentalPoint = rentalPointRepository.save(rentalPoint);
+        log.info("IN saveRentalPoint - rental point with title={} was saved", savedRentalPoint.getTitle());
+        return savedRentalPoint;
     }
 
     @Override
     public void deleteRentalPointById(Long rentalPointId) {
         if (rentalPointRepository.getRentalPointById(rentalPointId).isEmpty()) {
+            log.warn("IN deleteRentalPointById - no such rental point with ID={}", rentalPointId);
             throw new ServiceException("No such rental point with ID=" + rentalPointId);
         }
         rentalPointRepository.deleteRentalPointById(rentalPointId);
+        log.info("IN deleteRentalPointById - rental point with ID={} was deleted", rentalPointId);
     }
 
 }

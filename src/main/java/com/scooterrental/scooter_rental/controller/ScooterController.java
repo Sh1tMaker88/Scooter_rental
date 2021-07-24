@@ -5,6 +5,8 @@ import com.scooterrental.scooter_rental.model.dto.ScooterDTO;
 import com.scooterrental.scooter_rental.model.dto.mapper.MapStructMapper;
 import com.scooterrental.scooter_rental.service.RentalPointService;
 import com.scooterrental.scooter_rental.service.ScooterService;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.Link;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -29,11 +31,12 @@ public class ScooterController {
         this.mapStructMapper = mapStructMapper;
     }
 
+    //todo pagination and sorting
     @GetMapping("/{country}/{region}/{city}/{rentalPointId}/scooters")
-    public ResponseEntity<List<ScooterDTO>> getAllScootersOfRentalPoint(@PathVariable String country,
-                                                                        @PathVariable String region,
-                                                                        @PathVariable String city,
-                                                                        @PathVariable Long rentalPointId) {
+    public ResponseEntity<CollectionModel<ScooterDTO>> getAllScootersOfRentalPoint(@PathVariable String country,
+                                                                                   @PathVariable String region,
+                                                                                   @PathVariable String city,
+                                                                                   @PathVariable Long rentalPointId) {
         List<Scooter> scooterList = scooterService.getAllScooters(rentalPointId);
         List<ScooterDTO> scooterDTOList = mapStructMapper.toScooterDTOList(scooterList);
         for (ScooterDTO scooterDTO : scooterDTOList) {
@@ -41,13 +44,16 @@ public class ScooterController {
                     .slash("/" + country + "/" + region + "/" + city +
                             "/" + rentalPointId + "/scooters" + "/" + scooterDTO.getId())
                     .withSelfRel());
-            scooterDTO.add(linkTo(methodOn(RentalPointController.class)
-                    .getRentalPointRepresentation(country, region, city, rentalPointId))
-                    .withRel("to_rental_point"));
         }
-        //todo add links for delete scooter and get one
+        Link linkToCreate = linkTo(RentalPointController.class)
+                .slash("/" + country + "/" + "/" + region + "/" + city + "/" + rentalPointId + "/scooters")
+                .withRel("add_new_scooter_to_this_rental_point")
+                .withType("POST");
+        Link link = linkTo(methodOn(RentalPointController.class)
+                .getRentalPointRepresentation(country, region, city, rentalPointId))
+                .withRel("to_rental_point");
 
-        return ResponseEntity.ok(scooterDTOList);
+        return ResponseEntity.ok(CollectionModel.of(scooterDTOList, linkToCreate, link));
     }
 
     @GetMapping("/{country}/{region}/{city}/{rentalPointId}/scooters/{scooterId}")
@@ -57,24 +63,31 @@ public class ScooterController {
                                               @PathVariable Long rentalPointId,
                                               @PathVariable Long scooterId) {
         Scooter scooter = scooterService.getScooterById(scooterId);
-        scooter.getRentalPrice().add(linkTo(methodOn(RentalPriceController.class)
-                .getRentalPriceOfScooter(country, region, city, rentalPointId, scooterId,
-                        scooter.getRentalPrice().getId()))
-                .withSelfRel()
-                .withType("GET"));
-        //todo link to update
-//        scooter.add(linkTo())
+        if (scooter.getRentalPrice() != null) {
+            scooter.getRentalPrice().add(linkTo(methodOn(RentalPriceController.class)
+                    .getRentalPriceOfScooter(country, region, city, rentalPointId, scooterId,
+                            scooter.getRentalPrice().getId()))
+                    .withRel("to_price_set")
+                    .withType("GET"));
+        } else {
+            scooter.add(linkTo(ScooterController.class)
+                    .slash("/" + country + "/" + region + "/" + city + "/" + rentalPointId + "/scooters/" +
+                            scooterId + "/price")
+                    .withRel("set_rental_price_fot_this_scooter")
+                    .withType("PUT"));
+        }
+        scooter.add(linkTo(ScooterController.class)
+                .slash("/" + country + "/" + "/" + region + "/" + city + "/" + rentalPointId + "/scooters/" + scooterId)
+                .withRel("update_this_scooter")
+                .withType("PUT"));
         scooter.add(linkTo(methodOn(ScooterController.class)
                 .deleteScooter(country, region, city, rentalPointId, scooterId))
-                .withRel("delete_scooter")
+                .withRel("delete_this_scooter")
                 .withType("DELETE"));
         scooter.add(linkTo(methodOn(RentalPointController.class)
                 .getRentalPointRepresentation(country, region, city, rentalPointId))
                 .withRel("to_rental_point")
                 .withType("GET"));
-
-
-
 
         return ResponseEntity.ok(scooter);
     }
@@ -90,8 +103,6 @@ public class ScooterController {
         Scooter scooterFromDB = scooterService.saveScooter(scooter);
         return ResponseEntity.status(HttpStatus.CREATED).body(scooterFromDB);
     }
-
-    //todo add drop rental price endpoint
 
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @PutMapping("/{country}/{region}/{city}/{rentalPointId}/scooters/{scooterId}")

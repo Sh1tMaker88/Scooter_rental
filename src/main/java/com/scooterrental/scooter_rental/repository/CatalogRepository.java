@@ -14,9 +14,7 @@ public interface CatalogRepository extends JpaRepository<Catalog, Long> {
 
     List<Catalog> findAllByParentId(Long id);
 
-    Catalog getCatalogByTitle(String title);
-
-    Catalog getByTitle(String title);
+    Optional<Catalog> getByTitle(String title);
 
     Integer countCatalogByParentId(Long itemId);
 

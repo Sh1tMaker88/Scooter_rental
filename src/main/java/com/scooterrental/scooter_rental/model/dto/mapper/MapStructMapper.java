@@ -19,6 +19,7 @@ import java.util.List;
         )
 public interface MapStructMapper {
 
+    //todo remove not used DTO's
     RentalPointDTO toRentalPointDTO(RentalPoint rentalPoint);
 
     @InheritInverseConfiguration

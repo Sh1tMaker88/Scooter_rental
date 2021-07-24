@@ -142,7 +142,6 @@ public class UserServiceImpl implements UserService {
         return user;
     }
 
-    //todo rework exception for this method
     @Override
     public Page<User> getAllUsersWithPagination(Integer pageNumber, Integer pageSize, String sortBy) {
         Pageable paging = PageRequest.of(pageNumber - 1, pageSize, Sort.by(sortBy));

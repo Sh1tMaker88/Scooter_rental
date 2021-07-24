@@ -3,7 +3,7 @@
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
-    <changeSet id="3.1" author="ItMaker">
+    <changeSet id="3.1(create_rental_point)" author="ItMaker">
         <createTable tableName="rental_point">
             <column name="id" type="BIGINT" autoIncrement="true">
                 <constraints primaryKey="true" nullable="true"/>
@@ -17,7 +17,7 @@
                 <constraints nullable="false"/>
             </column>
 
-            <column name="location" type="POINT">
+            <column name="location" type="GEOMETRY">
                 <constraints nullable="false"/>
             </column>
 
@@ -43,13 +43,13 @@
         </createTable>
     </changeSet>
     
-    <changeSet id="3.1.1" author="ItMaker">
+    <changeSet id="3.1.1(add_idx_city_id)" author="ItMaker">
         <createIndex tableName="rental_point" indexName="idx_city_id">
             <column name="city_id"/>
         </createIndex>
     </changeSet>
 
-    <changeSet id="3.1.2" author="ItMaker">
+    <changeSet id="3.1.2(add_fk_rental_point_catalog)" author="ItMaker">
         <addForeignKeyConstraint baseTableName="rental_point"
                                  baseColumnNames="city_id"
                                  constraintName="fk_rental_point_catalog"
@@ -57,7 +57,7 @@
                                  referencedColumnNames="id"/>
     </changeSet>
 
-    <changeSet id="3.1.3" author="ItMaker">
+    <changeSet id="3.1.3(add_unique_rental_point_title)" author="ItMaker">
         <addUniqueConstraint tableName="rental_point" columnNames="title"/>
 
         <createIndex tableName="rental_point" indexName="idx_rental_point_title">
@@ -66,7 +66,7 @@
     </changeSet>
 
 
-    <changeSet id="3.2" author="ItMaker">
+    <changeSet id="3.2(create_rental_price)" author="ItMaker">
         <createTable tableName="rental_price">
             <column name="id" type="BIGINT" autoIncrement="true">
                 <constraints primaryKey="true" nullable="true"/>
@@ -106,14 +106,14 @@
         </createTable>
     </changeSet>
 
-    <changeSet id="3.2.1" author="ItMaker">
+    <changeSet id="3.2.1(add_idx_rental_price_title)" author="ItMaker">
         <createIndex tableName="rental_price" indexName="idx_rental_price_title">
             <column name="title"/>
         </createIndex>
     </changeSet>
 
 
-    <changeSet id="3.3" author="ItMaker">
+    <changeSet id="3.3(create_scooter)" author="ItMaker">
         <createTable tableName="scooter">
             <column name="id" type="BIGINT" autoIncrement="true">
                 <constraints primaryKey="true" nullable="true"/>
@@ -136,11 +136,11 @@
             </column>
 
             <column name="rental_point_id" type="BIGINT">
-                <constraints nullable="false" checkConstraint="CHECK (rental_point_id = ANY(SELECT id FROM catalog))"/>
+                <constraints nullable="false" checkConstraint="CHECK (rental_point_id = ANY(SELECT id FROM rental_point))"/>
             </column>
 
             <column name="price_id" type="BIGINT">
-                <constraints nullable="false" checkConstraint="CHECK (price_id = ANY(SELECT id FROM rental_price))"/>
+                <constraints checkConstraint="CHECK (price_id = ANY(SELECT id FROM rental_price))"/>
             </column>
 
             <column name="engine_power" type="INTEGER">
@@ -169,33 +169,33 @@
         </createTable>
     </changeSet>
 
-    <changeSet id="3.3.1" author="ItMaker">
+    <changeSet id="3.3.1(add_idx_rental_point_id)" author="ItMaker">
         <createIndex tableName="scooter" indexName="idx_rental_point_id">
             <column name="rental_point_id"/>
         </createIndex>
     </changeSet>
 
-    <changeSet id="3.3.2" author="ItMaker">
+    <changeSet id="3.3.2(add_fk_scooter_rental_point)" author="ItMaker">
         <addForeignKeyConstraint baseTableName="scooter"
                                  baseColumnNames="rental_point_id"
-                                 constraintName="fk_scooter_catalog"
-                                 referencedTableName="catalog"
+                                 constraintName="fk_scooter_rental_point"
+                                 referencedTableName="rental_point"
                                  referencedColumnNames="id"/>
     </changeSet>
 
-    <changeSet id="3.3.3" author="ItMaker">
+    <changeSet id="3.3.3(add_idx_scooter_model)" author="ItMaker">
         <createIndex tableName="scooter" indexName="idx_scooter_model">
             <column name="model"/>
         </createIndex>
     </changeSet>
 
-    <changeSet id="3.3.4" author="ItMaker">
+    <changeSet id="3.3.4(add_idx_scooter_serial_number)" author="ItMaker">
         <createIndex tableName="scooter" indexName="idx_scooter_serial_number">
             <column name="serial_number"/>
         </createIndex>
     </changeSet>
 
-    <changeSet id="3.3.5" author="ItMaker">
+    <changeSet id="3.3.5(add_fk_scooter_rental_price)" author="ItMaker">
         <addForeignKeyConstraint baseTableName="scooter"
                                  baseColumnNames="price_id"
                                  constraintName="fk_scooter_rental_price"
@@ -203,23 +203,19 @@
                                  referencedColumnNames="id"/>
     </changeSet>
 
-    <changeSet id="3.3.6" author="ItMaker">
+    <changeSet id="3.3.6(add_idx_scooter_price_id)" author="ItMaker">
         <createIndex tableName="scooter" indexName="idx_scooter_price_id">
             <column name="price_id"/>
         </createIndex>
     </changeSet>
 
-    <changeSet id="3.3.7(drop_nullable_price_constraint)" author="ItMaker">
-        <dropNotNullConstraint tableName="scooter" columnName="price_id"/>
-    </changeSet>
-
 
 <!--    Point values-->
-    <changeSet id="3.1.10" author="ItMaker">
+    <changeSet id="3.1.10(insert_rental_point)" author="ItMaker">
         <insert tableName="rental_point">
             <column name="title" value="SolPoint"/>
             <column name="owner" value="TrustGroup"/>
-            <column name="location" value="(27.525829, 52.788463)"/>
+            <column name="location" valueComputed="POINT(27.525829, 52.788463)::geometry"/>
             <column name="city_id" valueComputed="(SELECT id FROM catalog WHERE title='Salihorsk')"/>
             <column name="street" value="Zheleznodoroznaya"/>
             <column name="house_number" value="52"/>
@@ -228,11 +224,11 @@
         </insert>
     </changeSet>
 
-    <changeSet id="3.1.11" author="ItMaker">
+    <changeSet id="3.1.11(insert_rental_point)" author="ItMaker">
         <insert tableName="rental_point">
             <column name="title" value="MinerScooters"/>
             <column name="owner" value="Ivanov V.V."/>
-            <column name="location" value="(27.538843, 52.783837)"/>
+            <column name="location" valueComputed="(POINT(27.538843, 52.783837)::geometry)"/>
             <column name="city_id" valueComputed="(SELECT id FROM catalog WHERE title='Salihorsk')"/>
             <column name="street" value="Kazlova"/>
             <column name="house_number" value="26"/>
@@ -241,11 +237,11 @@
         </insert>
     </changeSet>
 
-    <changeSet id="3.1.12" author="ItMaker">
+    <changeSet id="3.1.12(insert_rental_point)" author="ItMaker">
         <insert tableName="rental_point">
             <column name="title" value="LightScooters"/>
             <column name="owner" value="Kovalev I.N."/>
-            <column name="location" value="(27.543156, 52.777021)"/>
+            <column name="location" valueComputed="(POINT(27.543156, 52.777021)::geometry)"/>
             <column name="city_id" valueComputed="(SELECT id FROM catalog WHERE title='Salihorsk')"/>
             <column name="street" value="Naberezhnaya"/>
             <column name="house_number" value="20"/>
@@ -254,11 +250,11 @@
         </insert>
     </changeSet>
 
-    <changeSet id="3.1.13" author="ItMaker">
+    <changeSet id="3.1.13(insert_rental_point)" author="ItMaker">
         <insert tableName="rental_point">
             <column name="title" value="SlutskScooters"/>
             <column name="owner" value="Smirnov V.V."/>
-            <column name="location" value="(27.549762, 53.025587)"/>
+            <column name="location" valueComputed="(POINT(27.549762, 53.025587)::geometry)"/>
             <column name="city_id" valueComputed="(SELECT id FROM catalog WHERE title='Slutsk')"/>
             <column name="street" value="Lenina"/>
             <column name="house_number" value="181"/>
@@ -267,11 +263,11 @@
         </insert>
     </changeSet>
 
-    <changeSet id="3.1.14" author="ItMaker">
+    <changeSet id="3.1.14(insert_rental_point)" author="ItMaker">
         <insert tableName="rental_point">
             <column name="title" value="MinskScooters"/>
             <column name="owner" value="TrustGroup"/>
-            <column name="location" value="(27.565475, 53.904076)"/>
+            <column name="location" valueComputed="(POINT(27.565475, 53.904076)::geometry)"/>
             <column name="city_id" valueComputed="(SELECT id FROM catalog WHERE title='Minsk')"/>
             <column name="street" value="Prospect Nezavisimosti"/>
             <column name="house_number" value="29"/>
@@ -280,11 +276,11 @@
         </insert>
     </changeSet>
 
-    <changeSet id="3.1.15" author="ItMaker">
+    <changeSet id="3.1.15(insert_rental_point)" author="ItMaker">
         <insert tableName="rental_point">
             <column name="title" value="RichPoint"/>
             <column name="owner" value="Maslov K.K."/>
-            <column name="location" value="(27.568861, 53.910289)"/>
+            <column name="location" valueComputed="(POINT(27.568861, 53.910289)::geometry)"/>
             <column name="city_id" valueComputed="(SELECT id FROM catalog WHERE title='Minsk')"/>
             <column name="street" value="Komunisticheskaya"/>
             <column name="house_number" value="10"/>
@@ -293,13 +289,9 @@
         </insert>
     </changeSet>
     
-    <changeSet id="3.1.20(change_pointToGeometry" author="ItMaker">
-        <modifyDataType tableName="rental_point" columnName="location" newDataType="GEOMETRY"/>
-    </changeSet>
-    
 
 <!--    Price values-->
-    <changeSet id="3.2.10" author="ItMaker">
+    <changeSet id="3.2.10(insert_rental_price)" author="ItMaker">
         <insert tableName="rental_price">
             <column name="title" value="low"/>
             <column name="one_hour" value="15.0"/>
@@ -312,7 +304,7 @@
         </insert>
     </changeSet>
 
-    <changeSet id="3.2.11" author="ItMaker">
+    <changeSet id="3.2.11(insert_rental_price)" author="ItMaker">
         <insert tableName="rental_price">
             <column name="title" value="medium"/>
             <column name="one_hour" value="20.0"/>
@@ -325,7 +317,7 @@
         </insert>
     </changeSet>
 
-    <changeSet id="3.2.12" author="ItMaker">
+    <changeSet id="3.2.12(insert_rental_price)" author="ItMaker">
         <insert tableName="rental_price">
             <column name="title" value="expensive"/>
             <column name="one_hour" value="25.0"/>
@@ -340,7 +332,7 @@
 
 
 <!--    Scooter values-->
-    <changeSet id="3.3.10" author="ItMaker">
+    <changeSet id="3.3.10(insert_scooter)" author="ItMaker">
         <insert tableName="scooter">
             <column name="brand" value="Xiaomi"/>
             <column name="model" value="Mi Electric Scooter Pro 2"/>
@@ -357,7 +349,7 @@
     </changeSet>
 
 
-    <changeSet id="3.3.11" author="ItMaker">
+    <changeSet id="3.3.11(insert_scooter)" author="ItMaker">
         <insert tableName="scooter">
             <column name="brand" value="Xiaomi"/>
             <column name="model" value="Mi Electric Scooter 1S"/>
@@ -373,7 +365,7 @@
         </insert>
     </changeSet>
 
-    <changeSet id="3.3.12" author="ItMaker">
+    <changeSet id="3.3.12(insert_scooter)" author="ItMaker">
         <insert tableName="scooter">
             <column name="brand" value="Kugoo"/>
             <column name="model" value="S3 Pro"/>
@@ -389,7 +381,7 @@
         </insert>
     </changeSet>
 
-    <changeSet id="3.3.13" author="ItMaker">
+    <changeSet id="3.3.13(insert_scooter)" author="ItMaker">
         <insert tableName="scooter">
             <column name="brand" value="Kugoo"/>
             <column name="model" value="M5"/>
@@ -406,7 +398,7 @@
     </changeSet>
 
 
-    <changeSet id="3.3.14" author="ItMaker">
+    <changeSet id="3.3.14(insert_scooter)" author="ItMaker">
         <insert tableName="scooter">
             <column name="brand" value="Xiaomi"/>
             <column name="model" value="Mi Electric Scooter Pro 2"/>
@@ -423,7 +415,7 @@
     </changeSet>
 
 
-    <changeSet id="3.3.15" author="ItMaker">
+    <changeSet id="3.3.15(insert_scooter)" author="ItMaker">
         <insert tableName="scooter">
             <column name="brand" value="Xiaomi"/>
             <column name="model" value="Mi Electric Scooter 1S"/>
@@ -440,7 +432,7 @@
     </changeSet>
 
 
-    <changeSet id="3.3.20" author="ItMaker">
+    <changeSet id="3.3.20(insert_scooter)" author="ItMaker">
         <insert tableName="scooter">
             <column name="brand" value="Xiaomi"/>
             <column name="model" value="Mi Electric Scooter Pro 2"/>
@@ -456,7 +448,7 @@
         </insert>
     </changeSet>
 
-    <changeSet id="3.3.21" author="ItMaker">
+    <changeSet id="3.3.21(insert_scooter)" author="ItMaker">
         <insert tableName="scooter">
             <column name="brand" value="Kugoo"/>
             <column name="model" value="S3 Pro"/>
@@ -472,7 +464,7 @@
         </insert>
     </changeSet>
 
-    <changeSet id="3.3.22" author="ItMaker">
+    <changeSet id="3.3.22(insert_scooter)" author="ItMaker">
         <insert tableName="scooter">
             <column name="brand" value="Kugoo"/>
             <column name="model" value="M5"/>
@@ -489,7 +481,7 @@
     </changeSet>
 
 
-    <changeSet id="3.3.50" author="ItMaker">
+    <changeSet id="3.3.23(insert_scooter)" author="ItMaker">
         <insert tableName="scooter">
             <column name="brand" value="Xiaomi"/>
             <column name="model" value="Mi Electric Scooter Pro 2"/>
@@ -505,7 +497,7 @@
         </insert>
     </changeSet>
 
-    <changeSet id="3.3.51" author="ItMaker">
+    <changeSet id="3.3.24(insert_scooter)" author="ItMaker">
         <insert tableName="scooter">
             <column name="brand" value="Kugoo"/>
             <column name="model" value="S3 Pro"/>
@@ -521,7 +513,7 @@
         </insert>
     </changeSet>
 
-    <changeSet id="3.3.52" author="ItMaker">
+    <changeSet id="3.3.25(insert_scooter)" author="ItMaker">
         <insert tableName="scooter">
             <column name="brand" value="Kugoo"/>
             <column name="model" value="M5"/>
@@ -537,7 +529,7 @@
         </insert>
     </changeSet>
 
-    <changeSet id="3.3.53" author="ItMaker">
+    <changeSet id="3.3.26(insert_scooter)" author="ItMaker">
         <insert tableName="scooter">
             <column name="brand" value="White Siberia"/>
             <column name="model" value="CityCoco WS-PRO"/>

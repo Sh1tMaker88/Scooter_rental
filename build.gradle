@@ -13,12 +13,12 @@ configurations {
         extendsFrom annotationProcessor
     }
 }
-//todo
-gradle.projectsEvaluated {
-    tasks.withType(JavaCompile) {
-        options.compilerArgs << "-parameters"
-    }
-}
+
+//gradle.projectsEvaluated {
+//    tasks.withType(JavaCompile) {
+//        options.compilerArgs << "-parameters"
+//    }
+//}
 
 repositories {
     mavenCentral()

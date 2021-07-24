@@ -15,5 +15,15 @@ public interface CatalogService {
 
     Integer countChildrenOfItem(Long itemId);
 
-    String getPathString(String region);
+    Catalog saveNewCountry(Catalog country);
+
+    Catalog updateCountry(Catalog country);
+
+    void deleteCatalogItemByTitle(String title);
+
+    Catalog saveCatalogItem(Catalog catalogItem, String parent);
+
+    String makeFirstLetterUppercase(String string);
+
+    String makeEveryWordStartsUppercase(String region);
 }

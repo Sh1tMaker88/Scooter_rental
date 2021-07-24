@@ -26,7 +26,8 @@ public class Catalog extends RepresentationModel<Catalog> implements Serializabl
     @Column(name = "parent_id")
     private Long parentId;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "city")
+    @OneToMany(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH},
+            mappedBy = "city")
     private List<RentalPoint> rentalPoints = new ArrayList<>();
 
     public void addRentalPoint(RentalPoint rentalPoint) {
@@ -37,15 +38,5 @@ public class Catalog extends RepresentationModel<Catalog> implements Serializabl
     public void removeRentalPoint(RentalPoint rentalPoint) {
         rentalPoints.remove(rentalPoint);
         rentalPoint.setCity(null);
-    }
-
-    @Override
-    public String toString() {
-        return "Catalog{" +
-                "id=" + id +
-                ", title='" + title + '\'' +
-                ", parentId=" + parentId +
-                ", rentalPoints=" + rentalPoints +
-                "} " + super.toString();
     }
 }

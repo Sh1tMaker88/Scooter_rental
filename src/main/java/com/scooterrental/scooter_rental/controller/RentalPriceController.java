@@ -25,7 +25,7 @@ public class RentalPriceController {
         this.scooterService = scooterService;
     }
 
-    @GetMapping("/rental_points/{country}/{region}/{city}/{rentalPointId}/scooters/{scooterId}/{priceId}")
+    @GetMapping("/rental_points/{country}/{region}/{city}/{rentalPointId}/scooters/{scooterId}/price/{priceId}")
     public ResponseEntity<RentalPrice> getRentalPriceOfScooter(@PathVariable String country,
                                                                @PathVariable String region,
                                                                @PathVariable String city,
@@ -46,6 +46,10 @@ public class RentalPriceController {
                 .slash("rental_price")
                 .withRel("add_new_rental_price_set")
                 .withType("POST"));
+        rentalPrice.add(linkTo(methodOn(RentalPointController.class)
+                .getRentalPointRepresentation(country, region, city, rentalPointId))
+                .withRel("to_rental_point")
+                .withType("GET"));
 
         return ResponseEntity.ok(rentalPrice);
     }
@@ -79,7 +83,7 @@ public class RentalPriceController {
     public ResponseEntity<Long> deleteRentalPrice(@PathVariable Long priceId) {
         rentalPriceService.deleteRentalPriceById(priceId);
 
-        return new ResponseEntity<>(priceId, HttpStatus.OK);
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
@@ -101,7 +105,7 @@ public class RentalPriceController {
     }
 
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    @PutMapping("/rental_points/{country}/{region}/{city}/{rentalPointId}/scooters/{scooterId}/{priceId}")
+    @PutMapping("/rental_points/{country}/{region}/{city}/{rentalPointId}/scooters/{scooterId}/price/{priceId}")
     public ResponseEntity<Scooter> setPriceForScooter(@PathVariable String country,
                                                       @PathVariable String region,
                                                       @PathVariable String city,

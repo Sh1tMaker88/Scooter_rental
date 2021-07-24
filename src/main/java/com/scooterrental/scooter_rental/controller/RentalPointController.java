@@ -9,6 +9,8 @@ import com.scooterrental.scooter_rental.model.dto.mapper.MapStructMapper;
 import com.scooterrental.scooter_rental.service.CatalogService;
 import com.scooterrental.scooter_rental.service.RentalPointService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.Link;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,16 +31,17 @@ public class RentalPointController {
     private final CatalogService catalogService;
     private final MapStructMapper mapStructMapper;
 
-    public RentalPointController(RentalPointService rentalPointService, CatalogService catalogService, MapStructMapper mapStructMapper) {
+    public RentalPointController(RentalPointService rentalPointService, CatalogService catalogService,
+                                 MapStructMapper mapStructMapper) {
         this.rentalPointService = rentalPointService;
         this.catalogService = catalogService;
         this.mapStructMapper = mapStructMapper;
     }
 
     @GetMapping("/{country}/{region}/{city}")
-    public ResponseEntity<List<RentalPointDTO>> getAllCityRentalPoints(@PathVariable String country,
-                                                                       @PathVariable String region,
-                                                                       @PathVariable String city) {
+    public ResponseEntity<CollectionModel<RentalPointDTO>> getAllCityRentalPoints(@PathVariable String country,
+                                                                                  @PathVariable String region,
+                                                                                  @PathVariable String city) {
         String cityStr = city.substring(0, 1).toUpperCase() + city.substring(1);
         Long cityId = catalogService.getCatalogByTitle(cityStr).getId();
 
@@ -52,29 +55,49 @@ public class RentalPointController {
             rentalPointDTO.add(catalogItem);
         }
 
-        return ResponseEntity.ok(rentalPointDTOList);
+        Link linkToCreate = linkTo(RentalPointController.class)
+                .slash("/" + country + "/" + region + "/" + city)
+                .withRel("add_new_rental_point_to_this_city")
+                .withType("POST");
+        Link linkToUpdate = linkTo(RentalPointController.class)
+                .slash("/" + country + "/" + region + "/" + city)
+                .withRel("edit_this_city")
+                .withType("PUT");
+        Link linkToDelete = linkTo(methodOn(CatalogController.class)
+                .deleteCity(country, region, city))
+                .withRel("delete_this_city")
+                .withType("DELETE");
+
+        return ResponseEntity.ok(CollectionModel.of(rentalPointDTOList, linkToCreate, linkToUpdate, linkToDelete));
     }
 
     @GetMapping("/{country}/{region}/{city}/{rentalPointId}")
-    public ResponseEntity<RentalPointWithScooterDTO> getRentalPointRepresentation(@PathVariable String country,
-                                                                                  @PathVariable String region,
-                                                                                  @PathVariable String city,
-                                                                                  @PathVariable Long rentalPointId) {
+    public ResponseEntity<EntityModel<RentalPointDTO>> getRentalPointRepresentation(@PathVariable String country,
+                                                                                   @PathVariable String region,
+                                                                                   @PathVariable String city,
+                                                                                   @PathVariable Long rentalPointId) {
         RentalPoint rentalPoint = rentalPointService.getRentalPointById(rentalPointId);
-        RentalPointWithScooterDTO pointDTO = mapStructMapper.toRentalPointWithScooterDTO(rentalPoint);
-        pointDTO.add(linkTo(methodOn(RentalPointController.class)
+        int scootersOfRentalPoint = rentalPoint.getScooterList().size();
+        RentalPointDTO pointDTO = mapStructMapper.toRentalPointDTO(rentalPoint);
+        Link linkToGet = linkTo(methodOn(ScooterController.class)
+                .getAllScootersOfRentalPoint(country, region, city, rentalPointId))
+                .withRel("scooters_of_rental_point(total: " + scootersOfRentalPoint + ")")
+                .withType("GET");
+        Link linkToCreate = linkTo(RentalPointController.class)
+                .slash("/" + country + "/" + "/" + region + "/" + city + "/" + rentalPointId + "/scooters")
+                .withRel("add_new_scooter")
+                .withType("POST");
+        Link linkToUpdate = linkTo(RentalPointController.class)
+                .slash("/" + country + "/" + "/" + region + "/" + city + "/" + rentalPointId)
+                .withRel("edit_this_rental_point")
+                .withType("PUT");
+        Link linkToDelete = linkTo(methodOn(RentalPointController.class)
                 .deleteRentalPoint(country, region, city, rentalPointId))
                 .withRel("delete_rental_point")
-                .withType("DELETE"));
-        pointDTO.add(linkTo(methodOn(ScooterController.class)
-                .getAllScootersOfRentalPoint(country, region, city, rentalPointId))
-                .withRel("scooters_of_rental_point")
-                .withType("GET"));
-        //todo add link to add scooter
+                .withType("DELETE");
 
-        return ResponseEntity.ok(pointDTO);
+        return ResponseEntity.ok(EntityModel.of(pointDTO, linkToGet, linkToCreate, linkToUpdate, linkToDelete));
     }
-
 
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @PostMapping("/{country}/{region}/{city}")
@@ -87,30 +110,26 @@ public class RentalPointController {
         return ResponseEntity.ok(mapStructMapper.toRentalPointDTO(rentalPoint));
     }
 
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PutMapping("/{country}/{region}/{city}/{rentalPointId}")
+    public ResponseEntity<RentalPointDTO> updateRentalPoint(@PathVariable String country,
+                                                            @PathVariable String region,
+                                                            @PathVariable String city,
+                                                            @PathVariable Long rentalPointId,
+                                                            @RequestBody RentalPointDTO rentalPointDTO) {
+        rentalPointDTO.setId(rentalPointId);
+        RentalPoint savedRentalPoint = rentalPointService.saveRentalPoint(mapStructMapper.toRentalPoint(rentalPointDTO));
+        return ResponseEntity.ok(mapStructMapper.toRentalPointDTO(savedRentalPoint));
+    }
 
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @DeleteMapping("/{country}/{region}/{city}/{rentalPointId}")
-    public ResponseEntity<Long> deleteRentalPoint(@PathVariable String country,
+    public ResponseEntity<RentalPoint> deleteRentalPoint(@PathVariable String country,
                                             @PathVariable String region,
                                             @PathVariable String city,
                                             @PathVariable Long rentalPointId) {
         rentalPointService.deleteRentalPointById(rentalPointId);
 
-        return new ResponseEntity<>(rentalPointId, HttpStatus.OK);
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
-//
-//    @GetMapping("belarus/minsk_region/slutsk")
-//    public ResponseEntity<List<Catalog>> getSlutskChildren() {
-//        List<Catalog> catalogList = catalogService.findAllSecondLevelTree("Slutsk");
-//        for (Catalog catalog : catalogList) {
-//            Integer childrenOfItem = catalogService.countChildrenOfItem(catalog.getId());
-//            Link catalogItem = linkTo(StarterController.class)
-//                    .slash("/rental_points/belarus/minsk_region/slutsk")
-//                    .slash(catalog.getTitle().replace(" ", "_").toLowerCase())
-//                    .withRel("Elements in section: " + childrenOfItem);
-//            catalog.add(catalogItem);
-//        }
-//
-//        return ResponseEntity.ok(catalogList);
-//    }
 }
