@@ -38,9 +38,6 @@ public class RentalPoint extends RepresentationModel<RentalPoint> implements Ser
     @OneToMany(mappedBy = "rentalPoint")
     private List<Scooter> scooterList;
 
-//    @JsonIgnore
-//    @Transient
-//    @JsonDeserialize(using = GeometryDeserializer.class)
     @Column(name = "location")
     private Point location;
 
@@ -50,6 +47,9 @@ public class RentalPoint extends RepresentationModel<RentalPoint> implements Ser
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "city_id")
     private Catalog city;
+
+    @Column(name = "balance")
+    private Double balance;
 
     @Column(name = "street")
     private String street;
@@ -75,7 +75,6 @@ public class RentalPoint extends RepresentationModel<RentalPoint> implements Ser
         return Objects.equals(id, that.id) &&
                 Objects.equals(title, that.title) &&
                 Objects.equals(owner, that.owner) &&
-//                Objects.equals(location, that.location) &&
                 Objects.equals(city, that.city) &&
                 Objects.equals(street, that.street) &&
                 Objects.equals(houseNumber, that.houseNumber) &&

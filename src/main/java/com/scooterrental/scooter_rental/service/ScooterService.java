@@ -13,4 +13,10 @@ public interface ScooterService {
     void deleteScooterByID(Long scooterId);
 
     Scooter saveScooter(Scooter scooter);
+
+    Scooter setNotAvailableStatus(Long scooterId);
+
+    Scooter setAvailableStatus(Long scooterId);
+
+    void checkIsScooterInRentalPoint(Long scooterId, Long rentalPointId);
 }

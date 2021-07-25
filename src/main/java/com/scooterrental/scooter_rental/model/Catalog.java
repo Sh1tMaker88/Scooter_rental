@@ -8,6 +8,7 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Getter
@@ -38,5 +39,21 @@ public class Catalog extends RepresentationModel<Catalog> implements Serializabl
     public void removeRentalPoint(RentalPoint rentalPoint) {
         rentalPoints.remove(rentalPoint);
         rentalPoint.setCity(null);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        Catalog catalog = (Catalog) o;
+        return Objects.equals(id, catalog.id) &&
+                Objects.equals(title, catalog.title) &&
+                Objects.equals(parentId, catalog.parentId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), id, title, parentId);
     }
 }

@@ -6,18 +6,30 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.scooterrental.scooter_rental.security.model.User;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Table(name = "rent")
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class RentHistory {
+
+    public RentHistory(String rentType, Double price, User userId, Scooter scooterId,
+                       RentalPoint rentalPointId) {
+        this.rentType = rentType;
+        this.price = price;
+        this.userId = userId;
+        this.scooterId = scooterId;
+        this.rentalPointId = rentalPointId;
+        this.rentDate = LocalDateTime.now();
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -55,5 +67,24 @@ public class RentHistory {
     @ManyToOne
     @JoinColumn(name = "rental_point_id")
     private RentalPoint rentalPointId;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        RentHistory that = (RentHistory) o;
+        return Objects.equals(id, that.id) &&
+                Objects.equals(rentType, that.rentType) &&
+                Objects.equals(price, that.price) &&
+                Objects.equals(rentDate, that.rentDate) &&
+                Objects.equals(userId, that.userId) &&
+                Objects.equals(scooterId, that.scooterId) &&
+                Objects.equals(rentalPointId, that.rentalPointId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, rentType, price, rentDate, userId, scooterId, rentalPointId);
+    }
 }
 

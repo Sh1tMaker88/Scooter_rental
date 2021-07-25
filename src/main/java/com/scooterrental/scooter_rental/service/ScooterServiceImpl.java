@@ -2,6 +2,7 @@ package com.scooterrental.scooter_rental.service;
 
 import com.scooterrental.scooter_rental.exception.ServiceException;
 import com.scooterrental.scooter_rental.model.Scooter;
+import com.scooterrental.scooter_rental.model.ScooterStatus;
 import com.scooterrental.scooter_rental.repository.RentalPointRepository;
 import com.scooterrental.scooter_rental.repository.ScooterRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -60,5 +61,24 @@ public class ScooterServiceImpl implements ScooterService {
         Scooter savedScooter = scooterRepository.save(scooter);
         log.info("IN saveScooter - scooter with serial number {} successfully saved", savedScooter.getSerialNumber());
         return savedScooter;
+    }
+
+    @Override
+    public Scooter setNotAvailableStatus(Long scooterId) {
+        Scooter scooter = getScooterById(scooterId);
+        scooter.setStatus(ScooterStatus.NOT_AVAILABLE);
+        return saveScooter(scooter);
+    }
+
+    @Override
+    public Scooter setAvailableStatus(Long scooterId) {
+        Scooter scooter = getScooterById(scooterId);
+        scooter.setStatus(ScooterStatus.AVAILABLE);
+        return saveScooter(scooter);
+    }
+
+    @Override
+    public void checkIsScooterInRentalPoint(Long scooterId, Long rentalPointId) {
+
     }
 }

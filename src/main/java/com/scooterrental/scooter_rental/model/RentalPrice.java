@@ -7,6 +7,7 @@ import org.springframework.hateoas.RepresentationModel;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Getter
@@ -48,18 +49,24 @@ public class RentalPrice extends RepresentationModel<RentalPrice> {
     private Double month;
 
     @Override
-    public String toString() {
-        return "RentalPrice{" +
-                "id=" + id +
-                ", title='" + title + '\'' +
-                ", scooter=" + scooter +
-                ", oneHour=" + oneHour +
-                ", twoHours=" + twoHours +
-                ", threeHours=" + threeHours +
-                ", oneDay=" + oneDay +
-                ", twoDays=" + twoDays +
-                ", week=" + week +
-                ", month=" + month +
-                '}';
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        RentalPrice that = (RentalPrice) o;
+        return Objects.equals(id, that.id) &&
+                Objects.equals(title, that.title) &&
+                Objects.equals(oneHour, that.oneHour) &&
+                Objects.equals(twoHours, that.twoHours) &&
+                Objects.equals(threeHours, that.threeHours) &&
+                Objects.equals(oneDay, that.oneDay) &&
+                Objects.equals(twoDays, that.twoDays) &&
+                Objects.equals(week, that.week) &&
+                Objects.equals(month, that.month);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), id, title, oneHour, twoHours, threeHours, oneDay, twoDays, week, month);
     }
 }

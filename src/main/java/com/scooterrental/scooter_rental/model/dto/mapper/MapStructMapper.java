@@ -1,14 +1,11 @@
 package com.scooterrental.scooter_rental.model.dto.mapper;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.scooterrental.scooter_rental.model.*;
 import com.scooterrental.scooter_rental.model.dto.*;
 import com.scooterrental.scooter_rental.security.model.User;
-import org.locationtech.jts.geom.Point;
 import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.factory.Mappers;
 
 import java.util.List;
 

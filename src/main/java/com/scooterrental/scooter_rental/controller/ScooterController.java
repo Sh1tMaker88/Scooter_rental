@@ -76,6 +76,10 @@ public class ScooterController {
                     .withRel("set_rental_price_fot_this_scooter")
                     .withType("PUT"));
         }
+        scooter.add(linkTo(methodOn(RentHistoryController.class)
+                .getVariationsToRentScooter(country, region, city, rentalPointId, scooterId))
+                .withRel("variations_to_rent_scooter")
+                .withType("GET"));
         scooter.add(linkTo(ScooterController.class)
                 .slash("/" + country + "/" + "/" + region + "/" + city + "/" + rentalPointId + "/scooters/" + scooterId)
                 .withRel("update_this_scooter")

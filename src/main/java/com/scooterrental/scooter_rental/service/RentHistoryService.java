@@ -1,6 +1,7 @@
 package com.scooterrental.scooter_rental.service;
 
 import com.scooterrental.scooter_rental.model.RentHistory;
+import org.springframework.hateoas.Link;
 
 import java.util.List;
 
@@ -17,4 +18,6 @@ public interface RentHistoryService {
     RentHistory saveRentHistory(RentHistory rentHistory);
 
     void deleteRentHistoryById(Long rentHistoryId);
+
+    RentHistory rentScooter(Long rentalPointId, Long scooterId, String period, String username);
 }
