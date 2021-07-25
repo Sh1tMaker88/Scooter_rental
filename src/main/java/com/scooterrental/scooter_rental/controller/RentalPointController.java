@@ -1,10 +1,7 @@
 package com.scooterrental.scooter_rental.controller;
 
 import com.scooterrental.scooter_rental.model.RentalPoint;
-import com.scooterrental.scooter_rental.model.Scooter;
 import com.scooterrental.scooter_rental.model.dto.RentalPointDTO;
-import com.scooterrental.scooter_rental.model.dto.RentalPointWithScooterDTO;
-import com.scooterrental.scooter_rental.model.dto.ScooterDTO;
 import com.scooterrental.scooter_rental.model.dto.mapper.MapStructMapper;
 import com.scooterrental.scooter_rental.service.CatalogService;
 import com.scooterrental.scooter_rental.service.RentalPointService;
@@ -83,6 +80,10 @@ public class RentalPointController {
                 .getAllScootersOfRentalPoint(country, region, city, rentalPointId))
                 .withRel("scooters_of_rental_point(total: " + scootersOfRentalPoint + ")")
                 .withType("GET");
+        Link linkRentHistory = linkTo(methodOn(RentHistoryController.class)
+                .getRentHistoryOfRentalPoint(country, region, city, rentalPointId))
+                .withRel("history_of_this_rental_point")
+                .withTitle("GET");
         Link linkToCreate = linkTo(RentalPointController.class)
                 .slash("/" + country + "/" + "/" + region + "/" + city + "/" + rentalPointId + "/scooters")
                 .withRel("add_new_scooter")
@@ -96,7 +97,8 @@ public class RentalPointController {
                 .withRel("delete_rental_point")
                 .withType("DELETE");
 
-        return ResponseEntity.ok(EntityModel.of(pointDTO, linkToGet, linkToCreate, linkToUpdate, linkToDelete));
+        return ResponseEntity.ok(EntityModel.of(pointDTO, linkToGet, linkRentHistory,
+                linkToCreate, linkToUpdate, linkToDelete));
     }
 
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")

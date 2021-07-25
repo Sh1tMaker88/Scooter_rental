@@ -1,11 +1,9 @@
 package com.scooterrental.scooter_rental.model.dto.mapper;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.scooterrental.scooter_rental.model.Catalog;
-import com.scooterrental.scooter_rental.model.RentalPoint;
-import com.scooterrental.scooter_rental.model.RentalPrice;
-import com.scooterrental.scooter_rental.model.Scooter;
+import com.scooterrental.scooter_rental.model.*;
 import com.scooterrental.scooter_rental.model.dto.*;
+import com.scooterrental.scooter_rental.security.model.User;
 import org.locationtech.jts.geom.Point;
 import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
@@ -26,14 +24,19 @@ public interface MapStructMapper {
     @Mapping(target = "scooterList", ignore = true)
     RentalPoint toRentalPoint(RentalPointDTO rentalPointDTO);
 
-    @Mapping(target = "x_coordinate", expression = "java(location.getX())")
-    @Mapping(target = "y_coordinate", expression = "java(location.getY())")
-    LocationDTO toLocationDTO(Point location);
-
     CityDTO toCityDTO(Catalog catalog);
 
     @InheritInverseConfiguration
     Catalog toCatalogFromCityDTO(CityDTO cityDTO);
+
+
+    UserSlimDTO toUserSlimDTO(User user);
+
+    ScooterSlimDTO toScooterSlimDTO(Scooter scooter);
+
+    RentalPointSlimDTO toRentalPointSlimDTO(RentalPoint rentalPoint);
+
+    List<RentHistoryDTO> toRentHistoryListDTO(List<RentHistory> rentHistory);
 
 //    @Mapping(ignore = true, target = "cityDTO.title")
 //    Catalog toCatalogFromCityDTO(CityDTO cityDTO);
@@ -48,5 +51,4 @@ public interface MapStructMapper {
 
     PriceTitleDTO toPriceTitleDTO(RentalPrice rentalPrice);
 
-    RentalPointWithScooterDTO toRentalPointWithScooterDTO(RentalPoint rentalPoint);
 }

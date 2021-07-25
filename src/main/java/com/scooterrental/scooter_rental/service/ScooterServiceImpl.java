@@ -23,7 +23,6 @@ public class ScooterServiceImpl implements ScooterService {
         this.rentalPointRepository = rentalPointRepository;
     }
 
-
     @Override
     public List<Scooter> getAllScooters(Long rentalPointId) {
         if (rentalPointRepository.getRentalPointById(rentalPointId).isEmpty()) {

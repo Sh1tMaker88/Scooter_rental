@@ -80,6 +80,10 @@ public class ScooterController {
                 .slash("/" + country + "/" + "/" + region + "/" + city + "/" + rentalPointId + "/scooters/" + scooterId)
                 .withRel("update_this_scooter")
                 .withType("PUT"));
+        scooter.add(linkTo(methodOn(RentHistoryController.class)
+                .getRentHistoryOfScooter(country, region, city, rentalPointId, scooterId))
+                .withRel("rent_history_of_this_scooter")
+                .withType("GET"));
         scooter.add(linkTo(methodOn(ScooterController.class)
                 .deleteScooter(country, region, city, rentalPointId, scooterId))
                 .withRel("delete_this_scooter")

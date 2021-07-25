@@ -1,6 +1,5 @@
 package com.scooterrental.scooter_rental.model;
 
-import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
@@ -8,6 +7,8 @@ import lombok.Setter;
 import org.springframework.hateoas.RepresentationModel;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -61,6 +62,10 @@ public class Scooter extends RepresentationModel<Scooter> {
 
     @Column(name = "weight")
     private Double weight;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "scooterId")
+    private List<RentHistory> rentHistoryList = new ArrayList<>();
 
     @Override
     public String toString() {

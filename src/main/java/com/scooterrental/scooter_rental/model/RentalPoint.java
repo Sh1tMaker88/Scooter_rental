@@ -10,6 +10,7 @@ import org.springframework.hateoas.RepresentationModel;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -62,21 +63,9 @@ public class RentalPoint extends RepresentationModel<RentalPoint> implements Ser
     @Column(name = "email")
     private String email;
 
-    @Override
-    public String toString() {
-        return "RentalPoint{" +
-                "id=" + id +
-                ", title='" + title + '\'' +
-                ", owner='" + owner + '\'' +
-                ", scooterList=" + scooterList +
-                ", location=" + location +
-                ", city=" + city +
-                ", street='" + street + '\'' +
-                ", houseNumber=" + houseNumber +
-                ", phoneNumber='" + phoneNumber + '\'' +
-                ", email='" + email + '\'' +
-                "} " + super.toString();
-    }
+    @JsonIgnore
+    @OneToMany(mappedBy = "rentalPointId")
+    private List<RentHistory> rentHistoryList = new ArrayList<>();
 
     @Override
     public boolean equals(Object o) {
