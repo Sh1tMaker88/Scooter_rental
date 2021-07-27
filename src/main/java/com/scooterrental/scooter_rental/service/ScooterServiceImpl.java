@@ -80,5 +80,6 @@ public class ScooterServiceImpl implements ScooterService {
     @Override
     public void checkIsScooterInRentalPoint(Long scooterId, Long rentalPointId) {
 
+        //todo this
     }
 }

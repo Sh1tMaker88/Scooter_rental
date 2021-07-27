@@ -33,6 +33,8 @@ public interface MapStructMapper {
 
     RentalPointSlimDTO toRentalPointSlimDTO(RentalPoint rentalPoint);
 
+    RentHistoryDTO toRentHistoryDTO(RentHistory rentHistory);
+
     List<RentHistoryDTO> toRentHistoryListDTO(List<RentHistory> rentHistory);
 
 //    @Mapping(ignore = true, target = "cityDTO.title")
@@ -48,4 +50,5 @@ public interface MapStructMapper {
 
     PriceTitleDTO toPriceTitleDTO(RentalPrice rentalPrice);
 
+    StarterDTO toStarterDTO(Catalog catalog);
 }

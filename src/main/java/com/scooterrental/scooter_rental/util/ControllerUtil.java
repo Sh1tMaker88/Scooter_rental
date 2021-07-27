@@ -1,8 +1,14 @@
-package com.scooterrental.scooter_rental.controller;
+package com.scooterrental.scooter_rental.util;
 
+import com.scooterrental.scooter_rental.controller.RentHistoryController;
+import com.scooterrental.scooter_rental.controller.RentalPointController;
+import com.scooterrental.scooter_rental.controller.ScooterController;
 import com.scooterrental.scooter_rental.model.dto.RentHistoryDTO;
 import com.scooterrental.scooter_rental.security.controller.UserController;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.hateoas.Link;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 
 import java.util.Arrays;
 import java.util.List;
@@ -12,13 +18,13 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 public class ControllerUtil {
 
-    static void setLinksForRentHistoryRepresentation(String country, String region, String city,
+    public static void setLinksForRentHistoryRepresentation(String country, String region, String city,
                                                       Long rentalPointId, RentHistoryDTO rentHistoryDTO) {
-        rentHistoryDTO.getRentalPointId().add(linkTo(methodOn(RentalPointController.class)
+        rentHistoryDTO.getRentalPointId().add(WebMvcLinkBuilder.linkTo(methodOn(RentalPointController.class)
                 .getRentalPointRepresentation(country, region, city, rentalPointId))
                 .withSelfRel()
                 .withType("GET"));
-        rentHistoryDTO.getScooterId().add(linkTo(methodOn(ScooterController.class).getScooter(country, region,
+        rentHistoryDTO.getScooterId().add(WebMvcLinkBuilder.linkTo(methodOn(ScooterController.class).getScooter(country, region,
                 city, rentalPointId, rentHistoryDTO.getScooterId().getId()))
                 .withSelfRel()
                 .withType("GET"));
@@ -28,7 +34,7 @@ public class ControllerUtil {
                 .withType("GET"));
     }
 
-    static List<Link> getLinksToRent(String country, String region, String city, Long rentalPointId, Long scooterId) {
+    public static List<Link> getLinksToRent(String country, String region, String city, Long rentalPointId, Long scooterId) {
         Link link1 = linkTo(RentHistoryController.class)
                 .slash("/rental_points/" + country + "/" + region + "/" + city + "/" + rentalPointId +
                         "/scooters/" + scooterId + "/rent/one_hour")
@@ -65,5 +71,14 @@ public class ControllerUtil {
                 .withRel("month")
                 .withType("POST");
         return Arrays.asList(link1, link2, link3, link4, link5, link6, link7);
+    }
+
+    public static PageRequest getPageRequestWithPaginationAndSort(Integer page, Integer pageSize, List<String> sort) {
+        if (sort.get(1).toLowerCase().equals("desc") || sort.get(1).toLowerCase().equals("dsc") ||
+                sort.get(1).toLowerCase().equals("descending")) {
+            return PageRequest.of(page, pageSize, Sort.by(sort.get(0)).descending());
+        } else {
+            return PageRequest.of(page, pageSize, Sort.by(sort.get(0)).ascending());
+        }
     }
 }

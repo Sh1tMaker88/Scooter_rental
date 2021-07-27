@@ -1,12 +1,16 @@
 package com.scooterrental.scooter_rental.security.controller;
 
+import com.scooterrental.scooter_rental.util.ControllerUtil;
+import com.scooterrental.scooter_rental.controller.RentHistoryController;
 import com.scooterrental.scooter_rental.exception.BadRequestException;
+import com.scooterrental.scooter_rental.model.RentHistory;
 import com.scooterrental.scooter_rental.security.dto.UserDto;
 import com.scooterrental.scooter_rental.security.model.User;
 import com.scooterrental.scooter_rental.security.service.UserService;
+import com.scooterrental.scooter_rental.service.RentHistoryService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.Link;
@@ -17,7 +21,10 @@ import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
 @Slf4j
@@ -25,17 +32,19 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 public class UserController {
 
     private final UserService userService;
+    private final RentHistoryService rentHistoryService;
 
-    public UserController(UserService userService) {
+    public UserController(UserService userService, RentHistoryService rentHistoryService) {
         this.userService = userService;
+        this.rentHistoryService = rentHistoryService;
     }
 
     @GetMapping
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<PagedModel<EntityModel<User>>> allUsers(
-            @RequestParam(required = false, defaultValue = "0") Integer pageNumber,
-            @RequestParam(required = false, defaultValue = "3") Integer pageSize,
-            @RequestParam(required = false, defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "1") Integer pageNumber,
+            @RequestParam(defaultValue = "3") Integer pageSize,
+            @RequestParam(defaultValue = "id") String sortBy,
             PagedResourcesAssembler<User> assembler
     ) {
         Page<User> usersPages = userService.getAllUsersWithPagination(pageNumber, pageSize, sortBy);
@@ -59,9 +68,9 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    @PostAuthorize("returnObject.body.username == principal.username " +
+    @PostAuthorize("returnObject.body.content.username == principal.username " +
             "OR hasAuthority('ROLE_ADMIN')")
-    public ResponseEntity<UserDto> getUserById(@PathVariable("id") Long id) {
+    public ResponseEntity<EntityModel<UserDto>> getUserById(@PathVariable("id") Long id) {
         User user = userService.findById(id);
 
         if (user == null) {
@@ -69,12 +78,19 @@ public class UserController {
         }
 
         UserDto result = UserDto.fromUser(user);
+        Link historyOfUser = linkTo(UserController.class)
+                .slash("/" + user.getId() + "/history")
+                .withRel("rent_history_of_this_user")
+                .withType("GET");
+        Link editUser = linkTo(UserController.class)
+                .slash("/" + user.getId())
+                .withRel("update_user")
+                .withType("POST");
 
-        return new ResponseEntity<>(result, HttpStatus.OK);
+        return ResponseEntity.ok(EntityModel.of(result, historyOfUser, editUser));
     }
 
     @PostMapping("/{id}")
-    @ResponseStatus
     @PreAuthorize("#user.username == principal.username " +
             "OR hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<User> updateUser(@RequestBody UserDto user,
@@ -85,5 +101,26 @@ public class UserController {
         }
         User updatedUser = userService.updateUser(id, user);
         return new ResponseEntity<>(updatedUser, HttpStatus.OK);
+    }
+
+    @GetMapping("/{userId}/history")
+    @PreAuthorize("@userServiceImpl.findById(#userId).username.equals(principal.username) " +
+            "OR hasAuthority('ROLE_ADMIN')")
+    public ResponseEntity<PagedModel<EntityModel<RentHistory>>> getUserRentHistory(
+            @PathVariable Long userId,
+            @RequestParam(defaultValue = "0") Integer page,
+            @RequestParam(defaultValue = "10") Integer pageSize,
+            @RequestParam(defaultValue = "id, asc") List<String> sort,
+            PagedResourcesAssembler<RentHistory> assembler) {
+        User user = userService.findById(userId);
+        PageRequest pageRequest = ControllerUtil.getPageRequestWithPaginationAndSort(page, pageSize, sort);
+        Page<RentHistory> rentHistoryPage =
+                rentHistoryService.getAllRentHistoriesByUsername(pageRequest, user.getUsername());
+        for (RentHistory rentHistory : rentHistoryPage.getContent()) {
+            rentHistory.add(linkTo(methodOn(RentHistoryController.class)
+                    .getRentHistoryById(rentHistory.getId()))
+                    .withSelfRel());
+        }
+        return ResponseEntity.ok(assembler.toModel(rentHistoryPage));
     }
 }

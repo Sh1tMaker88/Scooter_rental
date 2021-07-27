@@ -95,4 +95,20 @@ public class User extends RepresentationModel<User> {
     public int hashCode() {
         return Objects.hash(super.hashCode(), id, username, firstName, lastName, email, created, updated, status, roles);
     }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", username='" + username + '\'' +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                ", created=" + created +
+                ", updated=" + updated +
+                ", status=" + status +
+                ", roles=" + roles +
+                "} " + super.toString();
+    }
 }

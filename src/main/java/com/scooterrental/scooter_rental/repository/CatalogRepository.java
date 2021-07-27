@@ -9,7 +9,6 @@ import java.util.Optional;
 
 public interface CatalogRepository extends JpaRepository<Catalog, Long> {
 
-
     List<Catalog> findByParentIdIsNull();
 
     List<Catalog> findAllByParentId(Long id);

@@ -7,6 +7,7 @@ import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.scooterrental.scooter_rental.security.model.User;
 import lombok.*;
+import org.springframework.hateoas.RepresentationModel;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -19,7 +20,7 @@ import java.util.Objects;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class RentHistory {
+public class RentHistory extends RepresentationModel<RentHistory> {
 
     public RentHistory(String rentType, Double price, User userId, Scooter scooterId,
                        RentalPoint rentalPointId) {

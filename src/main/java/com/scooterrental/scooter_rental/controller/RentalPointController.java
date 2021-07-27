@@ -80,8 +80,8 @@ public class RentalPointController {
                 .getAllScootersOfRentalPoint(country, region, city, rentalPointId))
                 .withRel("scooters_of_rental_point(total: " + scootersOfRentalPoint + ")")
                 .withType("GET");
-        Link linkRentHistory = linkTo(methodOn(RentHistoryController.class)
-                .getRentHistoryOfRentalPoint(country, region, city, rentalPointId))
+        Link linkRentHistory = linkTo(RentHistoryController.class)
+                .slash("/rental_points/" + country + "/" + "/" + region + "/" + city + "/" + rentalPointId + "/history")
                 .withRel("history_of_this_rental_point")
                 .withTitle("GET");
         Link linkToCreate = linkTo(RentalPointController.class)

@@ -25,7 +25,8 @@ public class ScooterController {
     private final RentalPointService rentalPointService;
     private final MapStructMapper mapStructMapper;
 
-    public ScooterController(ScooterService scooterService, RentalPointService rentalPointService, MapStructMapper mapStructMapper) {
+    public ScooterController(ScooterService scooterService, RentalPointService rentalPointService,
+                             MapStructMapper mapStructMapper) {
         this.scooterService = scooterService;
         this.rentalPointService = rentalPointService;
         this.mapStructMapper = mapStructMapper;
@@ -80,12 +81,13 @@ public class ScooterController {
                 .getVariationsToRentScooter(country, region, city, rentalPointId, scooterId))
                 .withRel("variations_to_rent_scooter")
                 .withType("GET"));
-        scooter.add(linkTo(ScooterController.class)
-                .slash("/" + country + "/" + "/" + region + "/" + city + "/" + rentalPointId + "/scooters/" + scooterId)
+        scooter.add(linkTo(RentHistoryController.class)
+                .slash("/rental_points/" + country + "/" + "/" + region + "/" + city + "/" + rentalPointId + "/scooters/" + scooterId)
                 .withRel("update_this_scooter")
                 .withType("PUT"));
-        scooter.add(linkTo(methodOn(RentHistoryController.class)
-                .getRentHistoryOfScooter(country, region, city, rentalPointId, scooterId))
+        scooter.add(linkTo(RentHistoryController.class)
+                .slash("/rental_points/" + country + "/" + "/" + region + "/" + city + "/" + rentalPointId + "/scooters/" +
+                        scooterId + "/history")
                 .withRel("rent_history_of_this_scooter")
                 .withType("GET"));
         scooter.add(linkTo(methodOn(ScooterController.class)
