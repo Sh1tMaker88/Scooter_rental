@@ -76,8 +76,8 @@ public class RentalPointController {
         RentalPoint rentalPoint = rentalPointService.getRentalPointById(rentalPointId);
         int scootersOfRentalPoint = rentalPoint.getScooterList().size();
         RentalPointDTO pointDTO = mapStructMapper.toRentalPointDTO(rentalPoint);
-        Link linkToGet = linkTo(methodOn(ScooterController.class)
-                .getAllScootersOfRentalPoint(country, region, city, rentalPointId))
+        Link linkToGet = linkTo(ScooterController.class)
+                .slash("/" + country + "/" + "/" + region + "/" + city + "/" + rentalPointId + "/scooters")
                 .withRel("scooters_of_rental_point(total: " + scootersOfRentalPoint + ")")
                 .withType("GET");
         Link linkRentHistory = linkTo(RentHistoryController.class)

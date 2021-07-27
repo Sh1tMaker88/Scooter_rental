@@ -14,7 +14,6 @@ import java.util.List;
         )
 public interface MapStructMapper {
 
-    //todo remove not used DTO's
     RentalPointDTO toRentalPointDTO(RentalPoint rentalPoint);
 
     @InheritInverseConfiguration
@@ -26,7 +25,6 @@ public interface MapStructMapper {
     @InheritInverseConfiguration
     Catalog toCatalogFromCityDTO(CityDTO cityDTO);
 
-
     UserSlimDTO toUserSlimDTO(User user);
 
     ScooterSlimDTO toScooterSlimDTO(Scooter scooter);
@@ -36,9 +34,6 @@ public interface MapStructMapper {
     RentHistoryDTO toRentHistoryDTO(RentHistory rentHistory);
 
     List<RentHistoryDTO> toRentHistoryListDTO(List<RentHistory> rentHistory);
-
-//    @Mapping(ignore = true, target = "cityDTO.title")
-//    Catalog toCatalogFromCityDTO(CityDTO cityDTO);
 
     ScooterDTO toScooterDTO(Scooter scooter);
 

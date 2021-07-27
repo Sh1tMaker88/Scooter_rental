@@ -71,7 +71,8 @@ public class RentHistoryController {
             @RequestParam(defaultValue = "id, asc") List<String> sort,
             PagedResourcesAssembler<RentHistory> assembler) {
         PageRequest pageRequest = ControllerUtil.getPageRequestWithPaginationAndSort(page, pageSize, sort);
-        Page<RentHistory> rentHistoryPage = rentHistoryService.getAllRentHistoriesByRentalPoint(pageRequest, rentalPointId);
+        Page<RentHistory> rentHistoryPage =
+                rentHistoryService.getAllRentHistoriesByRentalPoint(pageRequest, rentalPointId);
         for (RentHistory rentHistory : rentHistoryPage.getContent()) {
             rentHistory.add(linkTo(methodOn(RentHistoryController.class)
                     .getRentHistoryById(rentHistory.getId()))
@@ -135,26 +136,4 @@ public class RentHistoryController {
 
         return ResponseEntity.ok(rentHistoryDTO);
     }
-
-
-//    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-//    @GetMapping("/rental_points/{country}/{region}/{city}/{rentalPointId}/scooters/{scooterId}/rent/{rentId}")
-//    public ResponseEntity<RentHistory> rentScooter(@PathVariable String country,
-//                                                   @PathVariable String region,
-//                                                   @PathVariable String city,
-//                                                   @PathVariable Long rentalPointId,
-//                                                   @PathVariable Long scooterId,
-//                                                   @PathVariable Long rentId) {
-//
-//    }
-//
-//    @PutMapping("/rental_points/{country}/{region}/{city}/{rentalPointId}/scooters/{scooterId}/rent/{rentId}")
-//    public ResponseEntity<RentHistory> rentScooter(@PathVariable String country,
-//                                                   @PathVariable String region,
-//                                                   @PathVariable String city,
-//                                                   @PathVariable Long rentalPointId,
-//                                                   @PathVariable Long scooterId,
-//                                                   @PathVariable Long rentId) {
-//
-//    }
 }

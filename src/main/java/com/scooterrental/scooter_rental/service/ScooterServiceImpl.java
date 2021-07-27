@@ -6,6 +6,8 @@ import com.scooterrental.scooter_rental.model.ScooterStatus;
 import com.scooterrental.scooter_rental.repository.RentalPointRepository;
 import com.scooterrental.scooter_rental.repository.ScooterRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,13 +27,24 @@ public class ScooterServiceImpl implements ScooterService {
     }
 
     @Override
-    public List<Scooter> getAllScooters(Long rentalPointId) {
+    public List<Scooter> getAllScootersOfRentalPoint(Long rentalPointId) {
         if (rentalPointRepository.getRentalPointById(rentalPointId).isEmpty()) {
             log.warn("IN getAllScooters - no such rental point with ID={}", rentalPointId);
             throw new ServiceException("No such rental point with ID=" + rentalPointId);
         }
         List<Scooter> scooterList = scooterRepository.findAllByRentalPointId(rentalPointId);
         log.info("IN getAllScooters - {} scooter were found", scooterList.size());
+        return scooterList;
+    }
+
+    @Override
+    public Page<Scooter> getAllScootersOfRentalPoint(Pageable pageable, Long rentalPointId) {
+        if (rentalPointRepository.getRentalPointById(rentalPointId).isEmpty()) {
+            log.warn("IN getAllScooters - no such rental point with ID={}", rentalPointId);
+            throw new ServiceException("No such rental point with ID=" + rentalPointId);
+        }
+        Page<Scooter> scooterList = scooterRepository.findAllByRentalPointId(pageable, rentalPointId);
+        log.info("IN getAllScooters - {} scooter were found", scooterList.getTotalElements());
         return scooterList;
     }
 
@@ -75,11 +88,5 @@ public class ScooterServiceImpl implements ScooterService {
         Scooter scooter = getScooterById(scooterId);
         scooter.setStatus(ScooterStatus.AVAILABLE);
         return saveScooter(scooter);
-    }
-
-    @Override
-    public void checkIsScooterInRentalPoint(Long scooterId, Long rentalPointId) {
-
-        //todo this
     }
 }

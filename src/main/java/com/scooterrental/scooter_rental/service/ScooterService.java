@@ -1,12 +1,16 @@
 package com.scooterrental.scooter_rental.service;
 
 import com.scooterrental.scooter_rental.model.Scooter;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
 public interface ScooterService {
 
-    List<Scooter> getAllScooters(Long rentalPointId);
+    Page<Scooter> getAllScootersOfRentalPoint(Pageable pageable, Long rentalPointId);
+
+    List<Scooter> getAllScootersOfRentalPoint(Long rentalPointId);
 
     Scooter getScooterById(Long scooterId);
 
@@ -17,6 +21,4 @@ public interface ScooterService {
     Scooter setNotAvailableStatus(Long scooterId);
 
     Scooter setAvailableStatus(Long scooterId);
-
-    void checkIsScooterInRentalPoint(Long scooterId, Long rentalPointId);
 }

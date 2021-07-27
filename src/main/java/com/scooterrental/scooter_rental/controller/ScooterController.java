@@ -5,7 +5,13 @@ import com.scooterrental.scooter_rental.model.dto.ScooterDTO;
 import com.scooterrental.scooter_rental.model.dto.mapper.MapStructMapper;
 import com.scooterrental.scooter_rental.service.RentalPointService;
 import com.scooterrental.scooter_rental.service.ScooterService;
+import com.scooterrental.scooter_rental.util.ControllerUtil;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.Link;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,15 +38,21 @@ public class ScooterController {
         this.mapStructMapper = mapStructMapper;
     }
 
-    //todo pagination and sorting
     @GetMapping("/{country}/{region}/{city}/{rentalPointId}/scooters")
-    public ResponseEntity<CollectionModel<ScooterDTO>> getAllScootersOfRentalPoint(@PathVariable String country,
-                                                                                   @PathVariable String region,
-                                                                                   @PathVariable String city,
-                                                                                   @PathVariable Long rentalPointId) {
-        List<Scooter> scooterList = scooterService.getAllScooters(rentalPointId);
-        List<ScooterDTO> scooterDTOList = mapStructMapper.toScooterDTOList(scooterList);
-        for (ScooterDTO scooterDTO : scooterDTOList) {
+    public ResponseEntity<CollectionModel<EntityModel<ScooterDTO>>> getAllScootersOfRentalPoint(
+            @PathVariable String country,
+            @PathVariable String region,
+            @PathVariable String city,
+            @PathVariable Long rentalPointId,
+            @RequestParam(defaultValue = "0") Integer page,
+            @RequestParam(defaultValue = "10") Integer pageSize,
+            @RequestParam(defaultValue = "id, asc") List<String> sort,
+            PagedResourcesAssembler<ScooterDTO> assembler) {
+        PageRequest pageRequest = ControllerUtil.getPageRequestWithPaginationAndSort(page, pageSize, sort);
+        List<ScooterDTO> scooterDTOList = mapStructMapper.toScooterDTOList(
+                scooterService.getAllScootersOfRentalPoint(rentalPointId));
+        Page<ScooterDTO> scooterDTOPage = new PageImpl<>(scooterDTOList, pageRequest, scooterDTOList.size());
+        for (ScooterDTO scooterDTO : scooterDTOPage) {
             scooterDTO.add(linkTo(ScooterController.class)
                     .slash("/" + country + "/" + region + "/" + city +
                             "/" + rentalPointId + "/scooters" + "/" + scooterDTO.getId())
@@ -52,9 +64,10 @@ public class ScooterController {
                 .withType("POST");
         Link link = linkTo(methodOn(RentalPointController.class)
                 .getRentalPointRepresentation(country, region, city, rentalPointId))
-                .withRel("to_rental_point");
+                .withRel("to_rental_point")
+                .withType("GET");
 
-        return ResponseEntity.ok(CollectionModel.of(scooterDTOList, linkToCreate, link));
+        return ResponseEntity.ok(assembler.toModel(scooterDTOPage).add(linkToCreate, link));
     }
 
     @GetMapping("/{country}/{region}/{city}/{rentalPointId}/scooters/{scooterId}")
