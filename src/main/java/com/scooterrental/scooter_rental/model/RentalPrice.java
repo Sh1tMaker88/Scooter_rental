@@ -1,7 +1,9 @@
 package com.scooterrental.scooter_rental.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.hateoas.RepresentationModel;
 
@@ -12,6 +14,8 @@ import java.util.Objects;
 @Entity
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 @Table(name = "rental_price")
 public class RentalPrice extends RepresentationModel<RentalPrice> {
 
@@ -68,5 +72,21 @@ public class RentalPrice extends RepresentationModel<RentalPrice> {
     @Override
     public int hashCode() {
         return Objects.hash(super.hashCode(), id, title, oneHour, twoHours, threeHours, oneDay, twoDays, week, month);
+    }
+
+    @Override
+    public String toString() {
+        return "RentalPrice{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", scooter=" + scooter +
+                ", oneHour=" + oneHour +
+                ", twoHours=" + twoHours +
+                ", threeHours=" + threeHours +
+                ", oneDay=" + oneDay +
+                ", twoDays=" + twoDays +
+                ", week=" + week +
+                ", month=" + month +
+                "} " + super.toString();
     }
 }

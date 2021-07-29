@@ -87,5 +87,18 @@ public class RentHistory extends RepresentationModel<RentHistory> {
     public int hashCode() {
         return Objects.hash(id, rentType, price, rentDate, userId, scooterId, rentalPointId);
     }
+
+    @Override
+    public String toString() {
+        return "RentHistory{" +
+                "id=" + id +
+                ", rentType='" + rentType + '\'' +
+                ", price=" + price +
+                ", rentDate=" + rentDate +
+                ", userId=" + userId +
+                ", scooterId=" + scooterId +
+                ", rentalPointId=" + rentalPointId +
+                "} " + super.toString();
+    }
 }
 

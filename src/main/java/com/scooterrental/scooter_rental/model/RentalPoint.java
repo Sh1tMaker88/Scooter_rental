@@ -86,4 +86,22 @@ public class RentalPoint extends RepresentationModel<RentalPoint> implements Ser
     public int hashCode() {
         return Objects.hash(id, title, owner, city, street, houseNumber, phoneNumber, email);
     }
+
+    @Override
+    public String toString() {
+        return "RentalPoint{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", owner='" + owner + '\'' +
+                ", scooterList=" + scooterList +
+                ", location=" + location +
+                ", city=" + city +
+                ", balance=" + balance +
+                ", street='" + street + '\'' +
+                ", houseNumber=" + houseNumber +
+                ", phoneNumber='" + phoneNumber + '\'' +
+                ", email='" + email + '\'' +
+                ", rentHistoryList=" + rentHistoryList +
+                "} " + super.toString();
+    }
 }

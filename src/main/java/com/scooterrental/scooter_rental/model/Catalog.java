@@ -1,7 +1,6 @@
 package com.scooterrental.scooter_rental.model;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.hateoas.RepresentationModel;
 
 import javax.persistence.*;
@@ -10,9 +9,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-@Entity
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Entity
 @Table(name = "catalog")
 public class Catalog extends RepresentationModel<Catalog> implements Serializable {
 
@@ -55,5 +56,15 @@ public class Catalog extends RepresentationModel<Catalog> implements Serializabl
     @Override
     public int hashCode() {
         return Objects.hash(super.hashCode(), id, title, parentId);
+    }
+
+    @Override
+    public String toString() {
+        return "Catalog{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", parentId=" + parentId +
+                ", rentalPoints=" + rentalPoints +
+                "} " + super.toString();
     }
 }

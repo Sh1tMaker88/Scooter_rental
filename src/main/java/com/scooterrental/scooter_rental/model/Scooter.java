@@ -1,7 +1,9 @@
 package com.scooterrental.scooter_rental.model;
 
 import com.fasterxml.jackson.annotation.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.hateoas.RepresentationModel;
 
@@ -13,6 +15,8 @@ import java.util.Objects;
 @Entity
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 @Table(name = "scooter")
 public class Scooter extends RepresentationModel<Scooter> {
 
@@ -93,5 +97,25 @@ public class Scooter extends RepresentationModel<Scooter> {
     @Override
     public int hashCode() {
         return Objects.hash(super.hashCode(), id, brand, model, serialNumber, status, rentalPoint, rentalPrice, enginePower, maxSpeed, batteryCapacity, wheelsDiameter, singleChargeDistance, weight, rentHistoryList);
+    }
+
+    @Override
+    public String toString() {
+        return "Scooter{" +
+                "id=" + id +
+                ", brand='" + brand + '\'' +
+                ", model='" + model + '\'' +
+                ", serialNumber='" + serialNumber + '\'' +
+                ", status=" + status +
+                ", rentalPoint=" + rentalPoint +
+                ", rentalPrice=" + rentalPrice +
+                ", enginePower=" + enginePower +
+                ", maxSpeed=" + maxSpeed +
+                ", batteryCapacity=" + batteryCapacity +
+                ", wheelsDiameter=" + wheelsDiameter +
+                ", singleChargeDistance=" + singleChargeDistance +
+                ", weight=" + weight +
+                ", rentHistoryList=" + rentHistoryList +
+                "} " + super.toString();
     }
 }
