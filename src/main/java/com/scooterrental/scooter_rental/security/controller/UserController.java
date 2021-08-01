@@ -33,6 +33,7 @@ public class UserController {
 
     private final UserService userService;
     private final RentHistoryService rentHistoryService;
+    private User user;
 
     public UserController(UserService userService, RentHistoryService rentHistoryService) {
         this.userService = userService;
@@ -43,7 +44,7 @@ public class UserController {
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<PagedModel<EntityModel<User>>> allUsers(
             @RequestParam(defaultValue = "1") Integer pageNumber,
-            @RequestParam(defaultValue = "3") Integer pageSize,
+            @RequestParam(defaultValue = "10") Integer pageSize,
             @RequestParam(defaultValue = "id") String sortBy,
             PagedResourcesAssembler<User> assembler
     ) {
@@ -61,6 +62,7 @@ public class UserController {
                     .slash(user.getId().toString())
                     .withSelfRel();
             user.add(userSelfLink);
+            user.setPassword("Not allowed");
         }
         PagedModel<EntityModel<User>> userListModel = assembler.toModel(usersPages);
 

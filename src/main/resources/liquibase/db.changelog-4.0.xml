@@ -2,12 +2,6 @@
                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
-
-<!--    <changeSet id="4.0" author="ItMaker">-->
-<!--        <addColumn tableName="rental_point">-->
-<!--            <column name="balance" type="DECIMAL(16,2)" defaultValue="0"/>-->
-<!--        </addColumn>-->
-<!--    </changeSet>-->
     
     <changeSet id="4.1(create_rent)" author="ItMaker">
         <createTable tableName="rent">

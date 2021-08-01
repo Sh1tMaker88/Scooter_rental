@@ -6,13 +6,13 @@ import com.scooterrental.scooter_rental.model.dto.CatalogDTO;
 import com.scooterrental.scooter_rental.repository.CatalogRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-@Transactional
 @Slf4j
 public class CatalogServiceImpl implements CatalogService {
 
@@ -22,6 +22,8 @@ public class CatalogServiceImpl implements CatalogService {
         this.catalogRepository = catalogRepository;
     }
 
+    @Override
+    @Transactional(propagation = Propagation.SUPPORTS)
     public List<CatalogDTO> findAllParentIdIsNull() {
         List<Catalog> catalog = catalogRepository.findByParentIdIsNull();
         if (catalog.isEmpty()) {
@@ -34,6 +36,8 @@ public class CatalogServiceImpl implements CatalogService {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    @Transactional(propagation = Propagation.SUPPORTS)
     public List<CatalogDTO> findAllSecondLevelTree(String parentTitle) {
         if (catalogRepository.getByTitle(parentTitle).isEmpty()) {
             log.warn("IN findAllSecondLevelTree - no such entity with parent title = {}", parentTitle);
@@ -49,6 +53,7 @@ public class CatalogServiceImpl implements CatalogService {
     }
 
     @Override
+    @Transactional(propagation = Propagation.SUPPORTS)
     public Catalog getCatalogByTitle(String title) {
         String strToSearch = makeEveryWordStartsUppercase(title);
         if (catalogRepository.getByTitle(strToSearch).isEmpty()) {
@@ -61,6 +66,7 @@ public class CatalogServiceImpl implements CatalogService {
     }
 
     @Override
+    @Transactional(propagation = Propagation.SUPPORTS)
     public Integer countChildrenOfItem(Long itemId) {
         Integer childrenOfItem = catalogRepository.countCatalogByParentId(itemId);
         log.info("IN countChildrenOfItem - catalog item with ID={} have {} children", itemId, childrenOfItem);
@@ -68,6 +74,7 @@ public class CatalogServiceImpl implements CatalogService {
     }
 
     @Override
+    @Transactional
     public Catalog saveNewCountry(Catalog country) {
         country.setTitle(makeFirstLetterUppercase(country.getTitle()));
         Catalog savedCountry = catalogRepository.save(country);
@@ -76,6 +83,7 @@ public class CatalogServiceImpl implements CatalogService {
     }
 
     @Override
+    @Transactional
     public Catalog updateCountry(Catalog country) {
         country.setParentId(null);
         country.setTitle(makeFirstLetterUppercase(country.getTitle()));
@@ -85,6 +93,7 @@ public class CatalogServiceImpl implements CatalogService {
     }
 
     @Override
+    @Transactional
     public void deleteCatalogItemByTitle(String title) {
         String strToSearch = makeEveryWordStartsUppercase(title);
         if (catalogRepository.getByTitle(strToSearch).isEmpty()) {
@@ -103,6 +112,7 @@ public class CatalogServiceImpl implements CatalogService {
     }
 
     @Override
+    @Transactional
     public Catalog saveCatalogItem(Catalog catalogItem, String parent) {
         String parentInDB = makeEveryWordStartsUppercase(parent);
         if (catalogRepository.getByTitle(parentInDB).isEmpty()) {
@@ -119,11 +129,13 @@ public class CatalogServiceImpl implements CatalogService {
     }
 
     @Override
+    @Transactional(propagation = Propagation.SUPPORTS)
     public String makeFirstLetterUppercase(String string) {
         return string.substring(0, 1).toUpperCase() + string.substring(1);
     }
 
     @Override
+    @Transactional(propagation = Propagation.SUPPORTS)
     public String makeEveryWordStartsUppercase(String region) {
         StringBuilder regionForSearch = new StringBuilder(region.substring(0, 1).toUpperCase());
         String str = region.replace("_", " ");

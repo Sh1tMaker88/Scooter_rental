@@ -9,12 +9,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
-@Transactional
 @Slf4j
 public class ScooterServiceImpl implements ScooterService {
 
@@ -27,6 +27,7 @@ public class ScooterServiceImpl implements ScooterService {
     }
 
     @Override
+    @Transactional(propagation = Propagation.SUPPORTS)
     public List<Scooter> getAllScootersOfRentalPoint(Long rentalPointId) {
         if (rentalPointRepository.getRentalPointById(rentalPointId).isEmpty()) {
             log.warn("IN getAllScooters - no such rental point with ID={}", rentalPointId);
@@ -38,6 +39,7 @@ public class ScooterServiceImpl implements ScooterService {
     }
 
     @Override
+    @Transactional(propagation = Propagation.SUPPORTS)
     public Page<Scooter> getAllScootersOfRentalPoint(Pageable pageable, Long rentalPointId) {
         if (rentalPointRepository.getRentalPointById(rentalPointId).isEmpty()) {
             log.warn("IN getAllScooters - no such rental point with ID={}", rentalPointId);
@@ -49,6 +51,7 @@ public class ScooterServiceImpl implements ScooterService {
     }
 
     @Override
+    @Transactional(propagation = Propagation.SUPPORTS)
     public Scooter getScooterById(Long scooterId) {
         if (scooterRepository.getScooterById(scooterId).isEmpty()) {
             log.warn("IN getScooterById - no such scooter with ID={}", scooterId);
@@ -60,6 +63,7 @@ public class ScooterServiceImpl implements ScooterService {
     }
 
     @Override
+    @Transactional
     public void deleteScooterByID(Long scooterId) {
         if (scooterRepository.getScooterById(scooterId).isEmpty()) {
             log.warn("IN deleteScooterByID - no such scooter with ID={}", scooterId);
@@ -70,6 +74,7 @@ public class ScooterServiceImpl implements ScooterService {
     }
 
     @Override
+    @Transactional
     public Scooter saveScooter(Scooter scooter) {
         Scooter savedScooter = scooterRepository.save(scooter);
         log.info("IN saveScooter - scooter with serial number {} successfully saved", savedScooter.getSerialNumber());
@@ -77,6 +82,7 @@ public class ScooterServiceImpl implements ScooterService {
     }
 
     @Override
+    @Transactional
     public Scooter setNotAvailableStatus(Long scooterId) {
         Scooter scooter = getScooterById(scooterId);
         scooter.setStatus(ScooterStatus.NOT_AVAILABLE);
@@ -84,6 +90,7 @@ public class ScooterServiceImpl implements ScooterService {
     }
 
     @Override
+    @Transactional
     public Scooter setAvailableStatus(Long scooterId) {
         Scooter scooter = getScooterById(scooterId);
         scooter.setStatus(ScooterStatus.AVAILABLE);

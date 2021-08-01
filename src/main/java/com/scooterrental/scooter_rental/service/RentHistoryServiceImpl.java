@@ -17,7 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 
 @Service
-@Transactional
 @Slf4j
 public class RentHistoryServiceImpl implements RentHistoryService{
 
@@ -40,6 +39,7 @@ public class RentHistoryServiceImpl implements RentHistoryService{
 
 
     @Override
+    @Transactional(propagation = Propagation.SUPPORTS)
     public Page<RentHistory> getAllRentHistoriesByRentalPoint(Pageable pageable, Long rentalPointId) {
         if (rentalPointRepository.getRentalPointById(rentalPointId).isEmpty()) {
             log.warn("IN getAllRentHistoriesByRentalPoint - no such rental point with ID={}", rentalPointId);
@@ -53,6 +53,7 @@ public class RentHistoryServiceImpl implements RentHistoryService{
     }
 
     @Override
+    @Transactional(propagation = Propagation.SUPPORTS)
     public Page<RentHistory> getAllRentHistoriesByUsername(Pageable pageable, String username) {
         if (userRepository.findByUsername(username).isEmpty()) {
             log.warn("IN getAllRentHistoriesByUsername - no such user with username={}", username);
@@ -65,6 +66,7 @@ public class RentHistoryServiceImpl implements RentHistoryService{
     }
 
     @Override
+    @Transactional(propagation = Propagation.SUPPORTS)
     public Page<RentHistory> getAllRentHistoriesByScooterId(Pageable pageable, Long scooterId) {
         if (scooterRepository.getScooterById(scooterId).isEmpty()) {
             log.warn("IN getAllRentHistoriesByScooterId - no such scooter with ID={}", scooterId);
@@ -78,6 +80,7 @@ public class RentHistoryServiceImpl implements RentHistoryService{
     }
 
     @Override
+    @Transactional(propagation = Propagation.SUPPORTS)
     public Page<RentHistory> getAllRentHistories(Pageable pageable) {
         Page<RentHistory> rentHistoryList = rentHistoryRepository.findAll(pageable);
         log.info("IN getAllRentHistories - find {} rent orders", rentHistoryList.getTotalElements());
@@ -85,6 +88,7 @@ public class RentHistoryServiceImpl implements RentHistoryService{
     }
 
     @Override
+    @Transactional(propagation = Propagation.SUPPORTS)
     public RentHistory getRentHistoryById(Long rentHistoryId) {
         if (rentHistoryRepository.getRentHistoryById(rentHistoryId).isEmpty()) {
             log.warn("IN getRentHistoryById - no such rent history with ID={}", rentHistoryId);
@@ -96,6 +100,7 @@ public class RentHistoryServiceImpl implements RentHistoryService{
     }
 
     @Override
+    @Transactional
     public RentHistory saveRentHistory(RentHistory rentHistory) {
         RentHistory savedRentHistory = rentHistoryRepository.save(rentHistory);
         log.info("IN saveRentHistory - rent history was saved");
@@ -103,6 +108,7 @@ public class RentHistoryServiceImpl implements RentHistoryService{
     }
 
     @Override
+    @Transactional
     public void deleteRentHistoryById(Long rentHistoryId) {
         if (rentHistoryRepository.getRentHistoryById(rentHistoryId).isEmpty()) {
             log.warn("IN deleteRentHistoryById - no such rent history with ID={}", rentHistoryId);
@@ -113,6 +119,7 @@ public class RentHistoryServiceImpl implements RentHistoryService{
     }
 
     @Override
+    @Transactional
     public RentHistory rentScooter(Long rentalPointId, Long scooterId, String period, String username) {
         if (scooterRepository.getScooterById(scooterId).isEmpty()) {
             log.warn("IN rentScooter - no such scooter with ID={}", scooterId);
@@ -145,6 +152,7 @@ public class RentHistoryServiceImpl implements RentHistoryService{
     }
 
     @Override
+    @Transactional(propagation = Propagation.SUPPORTS)
     public Catalog getRegionOfRentHistory(RentHistory rentHistory) {
         Long regionId = rentHistory.getRentalPointId().getCity().getParentId();
         if (catalogRepository.findById(regionId).isEmpty()) {
@@ -157,6 +165,7 @@ public class RentHistoryServiceImpl implements RentHistoryService{
     }
 
     @Override
+    @Transactional(propagation = Propagation.SUPPORTS)
     public Catalog getCountryOfRentHistory(RentHistory rentHistory) {
         Catalog region = getRegionOfRentHistory(rentHistory);
         if (catalogRepository.findById(region.getParentId()).isEmpty()) {

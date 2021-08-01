@@ -14,6 +14,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -54,6 +56,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional(propagation = Propagation.SUPPORTS)
     public List<User> getAllUsers() {
         List<User> usersList = userRepository.findAll();
         log.info("IN getAllUsers - {} users was found", usersList.size());
@@ -61,6 +64,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional(propagation = Propagation.SUPPORTS)
     public User findByUsername(String username) {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() ->  new ServiceException("IN findByUsername - user with username " + username +
@@ -70,6 +74,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional(propagation = Propagation.SUPPORTS)
     public User findById(Long userId) {
         User user = userRepository.findById(userId).orElse(null);
         if (user == null) {
@@ -81,6 +86,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public void deleteUser(Long userId) {
         if (userRepository.findById(userId).isEmpty()) {
             log.warn("IN deleteUser - no such user with id: {} in database", userId);
@@ -91,6 +97,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public User updateUser(Long id, UserDto userDto) {
         User user = userRepository.findById(id)
                 .orElseThrow(() ->  new ServiceException("IN findByUsername - user id: " + id +
@@ -139,10 +146,12 @@ public class UserServiceImpl implements UserService {
         }
         user.setUpdated(new Date());
 
+
         return user;
     }
 
     @Override
+    @Transactional(propagation = Propagation.SUPPORTS)
     public Page<User> getAllUsersWithPagination(Integer pageNumber, Integer pageSize, String sortBy) {
         Pageable paging = PageRequest.of(pageNumber - 1, pageSize, Sort.by(sortBy));
         Page<User> pagedResult = userRepository.findAll(paging);

@@ -6,12 +6,12 @@ import com.scooterrental.scooter_rental.model.Scooter;
 import com.scooterrental.scooter_rental.repository.RentalPriceRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
-@Transactional
 @Slf4j
 public class RentalPriceServiceImpl implements RentalPriceService {
 
@@ -24,6 +24,7 @@ public class RentalPriceServiceImpl implements RentalPriceService {
     }
 
     @Override
+    @Transactional(propagation = Propagation.SUPPORTS)
     public RentalPrice getRentalPriceById(Long rentalPriceId) {
         if (rentalPriceRepository.getRentalPriceById(rentalPriceId).isEmpty()) {
             log.warn("IN getRentalPriceById - no such rental_price with ID={}", rentalPriceId);
@@ -35,6 +36,7 @@ public class RentalPriceServiceImpl implements RentalPriceService {
     }
 
     @Override
+    @Transactional(propagation = Propagation.SUPPORTS)
     public List<RentalPrice> findAllRentalPrice() {
         List<RentalPrice> priceList = rentalPriceRepository.findAll();
         log.info("IN findAllRentalPrice - {} price sets was found", priceList.size());
@@ -42,6 +44,7 @@ public class RentalPriceServiceImpl implements RentalPriceService {
     }
 
     @Override
+    @Transactional
     public void deleteRentalPriceById(Long rentalPriceId) {
         if (rentalPriceRepository.getRentalPriceById(rentalPriceId).isEmpty()) {
             log.warn("IN deleteRentalPriceById - no such price set with ID={}", rentalPriceId);
@@ -52,6 +55,7 @@ public class RentalPriceServiceImpl implements RentalPriceService {
     }
 
     @Override
+    @Transactional
     public RentalPrice saveRentalPrice(RentalPrice rentalPrice) {
         RentalPrice priceSet = rentalPriceRepository.save(rentalPrice);
         log.info("IN saveRentalPrice - price set with title:'{}' was saved", rentalPrice.getTitle());
@@ -59,6 +63,7 @@ public class RentalPriceServiceImpl implements RentalPriceService {
     }
 
     @Override
+    @Transactional
     public Scooter setNewRentalPriceToScooter(RentalPrice rentalPrice, Long scooterId) {
         Scooter scooter = scooterService.getScooterById(scooterId);
         RentalPrice savedPrice = saveRentalPrice(rentalPrice);
@@ -70,6 +75,7 @@ public class RentalPriceServiceImpl implements RentalPriceService {
     }
 
     @Override
+    @Transactional
     public Scooter setPriceForScooterByPriceId(Long priceId, Long scooterId) {
         Scooter scooter = scooterService.getScooterById(scooterId);
         scooter.setRentalPrice(getRentalPriceById(priceId));

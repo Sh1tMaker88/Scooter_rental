@@ -40,6 +40,8 @@
             <column name="email" type="VARCHAR">
                 <constraints nullable="false" checkConstraint="CHECK (email like '^(.+)@(\S+)$')"/>
             </column>
+
+            <column name="balance" type="DECIMAL(16,2)" defaultValue="0"/>
         </createTable>
     </changeSet>
     
