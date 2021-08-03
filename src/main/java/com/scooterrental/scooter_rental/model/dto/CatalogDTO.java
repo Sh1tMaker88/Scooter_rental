@@ -11,8 +11,6 @@ import java.io.Serializable;
 
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
 public class CatalogDTO extends RepresentationModel<CatalogDTO> implements Serializable {
 
     @JsonProperty("id")

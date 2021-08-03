@@ -15,8 +15,6 @@ import java.util.Objects;
 
 @Setter
 @Getter
-@NoArgsConstructor
-@AllArgsConstructor
 public class RentalPointDTO extends RepresentationModel<RentalPointDTO> {
 
     @JsonProperty("id")
@@ -27,9 +25,6 @@ public class RentalPointDTO extends RepresentationModel<RentalPointDTO> {
 
     @JsonProperty("owner")
     private String owner;
-
-//    @JsonProperty("scooterList")
-//    private List<ScooterSlimDTO> scooterList;
 
     @JsonProperty("location")
     private Point location;
@@ -49,4 +44,6 @@ public class RentalPointDTO extends RepresentationModel<RentalPointDTO> {
     @JsonProperty("email")
     private String email;
 
+    @JsonProperty("balance")
+    private Double balance;
 }

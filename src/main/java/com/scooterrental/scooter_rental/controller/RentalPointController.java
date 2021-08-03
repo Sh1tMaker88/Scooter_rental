@@ -119,8 +119,9 @@ public class RentalPointController {
                                                             @PathVariable String city,
                                                             @PathVariable Long rentalPointId,
                                                             @RequestBody RentalPointDTO rentalPointDTO) {
-        rentalPointDTO.setId(rentalPointId);
-        RentalPoint savedRentalPoint = rentalPointService.saveRentalPoint(mapStructMapper.toRentalPoint(rentalPointDTO));
+        RentalPoint rentalPoint = mapStructMapper.updateRentalPointFromRentalPointDTO(rentalPointDTO,
+                rentalPointService.getRentalPointById(rentalPointId));
+        RentalPoint savedRentalPoint = rentalPointService.saveRentalPoint(rentalPoint);
         return ResponseEntity.ok(mapStructMapper.toRentalPointDTO(savedRentalPoint));
     }
 

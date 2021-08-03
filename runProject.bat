@@ -1,0 +1,1 @@
+java -jar build/libs/scooter_rental-1.0.0-SNAPSHOT.jar

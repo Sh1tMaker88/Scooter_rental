@@ -6,6 +6,7 @@ import com.scooterrental.scooter_rental.security.model.User;
 import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
 
 import java.util.List;
 
@@ -16,14 +17,21 @@ public interface MapStructMapper {
 
     RentalPointDTO toRentalPointDTO(RentalPoint rentalPoint);
 
-    @InheritInverseConfiguration
+//    @InheritInverseConfiguration
     @Mapping(target = "scooterList", ignore = true)
+    @Mapping(target = "rentHistoryList", ignore = true)
     RentalPoint toRentalPoint(RentalPointDTO rentalPointDTO);
+
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "scooterList", ignore = true)
+    @Mapping(target = "rentHistoryList", ignore = true)
+    RentalPoint updateRentalPointFromRentalPointDTO(RentalPointDTO rentalPointDTO,
+                                                    @MappingTarget RentalPoint rentalPoint);
 
     CityDTO toCityDTO(Catalog catalog);
 
-    @InheritInverseConfiguration
-    Catalog toCatalogFromCityDTO(CityDTO cityDTO);
+    @Mapping(target = "rentalPoints", ignore = true)
+    Catalog toCityFromCityDTO(CityDTO cityDTO);
 
     UserSlimDTO toUserSlimDTO(User user);
 

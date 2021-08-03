@@ -13,4 +13,7 @@ public class CityDTO {
 
     @JsonProperty("title")
     private String title;
+
+    @JsonProperty("parentId")
+    private Long parentId;
 }

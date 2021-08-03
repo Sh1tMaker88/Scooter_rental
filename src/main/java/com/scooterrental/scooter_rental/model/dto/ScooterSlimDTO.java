@@ -9,8 +9,6 @@ import org.springframework.hateoas.RepresentationModel;
 
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
 public class ScooterSlimDTO extends RepresentationModel<ScooterSlimDTO> {
 
     @JsonProperty("id")
