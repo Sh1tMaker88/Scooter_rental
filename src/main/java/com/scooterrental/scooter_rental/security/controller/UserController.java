@@ -95,13 +95,13 @@ public class UserController {
     @PostMapping("/{id}")
     @PreAuthorize("#user.username == principal.username " +
             "OR hasAuthority('ROLE_ADMIN')")
-    public ResponseEntity<User> updateUser(@RequestBody UserDto user,
-                                           @PathVariable("id") Long id) {
+    public ResponseEntity<User> updateUserWithDto(@RequestBody UserDto user,
+                                                  @PathVariable("id") Long id) {
         User check = userService.findById(id);
         if (check == null) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
-        User updatedUser = userService.updateUser(id, user);
+        User updatedUser = userService.updateUserWithDto(id, user);
         return new ResponseEntity<>(updatedUser, HttpStatus.OK);
     }
 

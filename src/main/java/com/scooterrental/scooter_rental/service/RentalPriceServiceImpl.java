@@ -57,6 +57,8 @@ public class RentalPriceServiceImpl implements RentalPriceService {
     @Override
     @Transactional
     public RentalPrice saveRentalPrice(RentalPrice rentalPrice) {
+        RentalPrice rentalPriceFromDB = getRentalPriceById(rentalPrice.getId());
+        rentalPrice.setScooter(rentalPriceFromDB.getScooter());
         RentalPrice priceSet = rentalPriceRepository.save(rentalPrice);
         log.info("IN saveRentalPrice - price set with title:'{}' was saved", rentalPrice.getTitle());
         return priceSet;

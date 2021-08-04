@@ -52,6 +52,9 @@ public class RentalPointServiceImpl implements RentalPointService {
     @Override
     @Transactional
     public RentalPoint saveRentalPoint(RentalPoint rentalPoint) {
+        RentalPoint rentalPointFromDB = getRentalPointById(rentalPoint.getId());
+        rentalPoint.setScooterList(rentalPointFromDB.getScooterList());
+        rentalPoint.setRentHistoryList(rentalPointFromDB.getRentHistoryList());
         RentalPoint savedRentalPoint = rentalPointRepository.save(rentalPoint);
         log.info("IN saveRentalPoint - rental point with title={} was saved", savedRentalPoint.getTitle());
         return savedRentalPoint;

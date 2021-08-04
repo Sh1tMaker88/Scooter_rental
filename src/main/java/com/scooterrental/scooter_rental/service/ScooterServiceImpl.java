@@ -76,6 +76,8 @@ public class ScooterServiceImpl implements ScooterService {
     @Override
     @Transactional
     public Scooter saveScooter(Scooter scooter) {
+        Scooter scooterFromDB = getScooterById(scooter.getId());
+        scooter.setRentHistoryList(scooterFromDB.getRentHistoryList());
         Scooter savedScooter = scooterRepository.save(scooter);
         log.info("IN saveScooter - scooter with serial number {} successfully saved", savedScooter.getSerialNumber());
         return savedScooter;

@@ -32,16 +32,6 @@ public class Catalog extends RepresentationModel<Catalog> implements Serializabl
             mappedBy = "city")
     private List<RentalPoint> rentalPoints = new ArrayList<>();
 
-    public void addRentalPoint(RentalPoint rentalPoint) {
-        rentalPoints.add(rentalPoint);
-        rentalPoint.setCity(this);
-    }
-
-    public void removeRentalPoint(RentalPoint rentalPoint) {
-        rentalPoints.remove(rentalPoint);
-        rentalPoint.setCity(null);
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

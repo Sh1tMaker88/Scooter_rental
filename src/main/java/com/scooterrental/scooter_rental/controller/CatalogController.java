@@ -172,7 +172,6 @@ public class CatalogController {
         return ResponseEntity.ok(catalogItem);
     }
 
-    //todo rework
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @PutMapping("/{country}/{region}/{city}")
     public ResponseEntity<Catalog> updateCity(@PathVariable String country,

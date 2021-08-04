@@ -123,6 +123,7 @@ public class CatalogServiceImpl implements CatalogService {
         log.info("IN saveCatalogItem - found catalog item with title={}", catalogItemFromDB.getTitle());
         catalogItem.setParentId(catalogItemFromDB.getId());
         catalogItem.setTitle(makeEveryWordStartsUppercase(catalogItem.getTitle()));
+        catalogItem.setRentalPoints(catalogItemFromDB.getRentalPoints());
         Catalog savedCatalog = catalogRepository.save(catalogItem);
         log.info("IN saveCatalogItem - catalog item with title={} was saved", savedCatalog.getTitle());
         return savedCatalog;

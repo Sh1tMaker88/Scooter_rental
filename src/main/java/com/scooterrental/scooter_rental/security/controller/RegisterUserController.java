@@ -1,5 +1,6 @@
 package com.scooterrental.scooter_rental.security.controller;
 
+import com.scooterrental.scooter_rental.exception.BadRequestException;
 import com.scooterrental.scooter_rental.security.dto.UserDto;
 import com.scooterrental.scooter_rental.security.model.User;
 import com.scooterrental.scooter_rental.security.service.UserService;
@@ -35,11 +36,13 @@ public class RegisterUserController {
     @PostMapping("/registration")
     public ResponseEntity<User> createUser(@ModelAttribute("userForm") @Valid User user, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
+            StringBuilder exceptions = new StringBuilder();
             List<ObjectError> allErrors = bindingResult.getAllErrors();
             for (ObjectError error : allErrors) {
                 log.warn(error.getDefaultMessage());
+                exceptions.append(error.getDefaultMessage()).append("; ");
             }
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            throw new BadRequestException(exceptions.toString());
         }
         User register = userService.register(user);
         return new ResponseEntity<>(register, HttpStatus.OK);

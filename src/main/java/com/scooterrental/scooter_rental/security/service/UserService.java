@@ -18,7 +18,9 @@ public interface UserService {
 
     void deleteUser(Long userId);
 
-    User updateUser(Long id, UserDto user);
+    User updateUserWithDto(Long id, UserDto user);
+
+    User saveUser(User user);
 
     Page<User> getAllUsersWithPagination(Integer pageNumber, Integer pageSize, String sortBy);
 }

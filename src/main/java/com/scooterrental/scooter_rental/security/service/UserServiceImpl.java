@@ -37,6 +37,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public User register(User user) {
         Role roleUser = roleRepository.findByName("ROLE_USER");
         List<Role> userRoles = new ArrayList<>();
@@ -98,11 +99,25 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public User updateUser(Long id, UserDto userDto) {
+    public User updateUserWithDto(Long id, UserDto userDto) {
         User user = userRepository.findById(id)
                 .orElseThrow(() ->  new ServiceException("IN findByUsername - user id: " + id +
                 " was not found"));
         return checkAndSetUserFields(userDto, user);
+    }
+
+    @Override
+    @Transactional
+    public User saveUser(User user) {
+        User userFromDB = findById(user.getId());
+        user.setRentHistoryList(userFromDB.getRentHistoryList());
+        List<Role> roleList = new ArrayList<>();
+        for (Role role : user.getRoles()) {
+            roleList.add(roleRepository.findByName(role.getName()));
+        }
+        user.setRoles(roleList);
+
+        return userRepository.save(user);
     }
 
     private User checkAndSetUserFields(UserDto userDto, User user) {
@@ -119,7 +134,7 @@ public class UserServiceImpl implements UserService {
         if (userDto.getFirstName() != null && userDto.getFirstName().length() > 2) {
             user.setFirstName(userDto.getFirstName());
         } else {
-            log.warn("Incorrect first name input or it already exists");
+            log.warn("Incorrect first name input");
             throw new ServiceException("Incorrect first name input");
         }
 
@@ -145,7 +160,6 @@ public class UserServiceImpl implements UserService {
             throw new ServiceException("Password was empty");
         }
         user.setUpdated(new Date());
-
 
         return user;
     }
