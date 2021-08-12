@@ -84,6 +84,21 @@ public class CatalogServiceImpl implements CatalogService {
 
     @Override
     @Transactional
+    public Catalog saveNewRegionOrCity(Catalog catalogItem, String parent) {
+        String strToSearch = makeEveryWordStartsUppercase(parent);
+        if (catalogRepository.getByTitle(strToSearch).isEmpty()) {
+            log.warn("IN saveNewRegion - no such country with title: {}", strToSearch);
+            throw new ServiceException("No such country with title: " + strToSearch);
+        }
+        Catalog parentFromDB = catalogRepository.getByTitle(strToSearch).get();
+        catalogItem.setParentId(parentFromDB.getId());
+        catalogItem.setTitle(makeEveryWordStartsUppercase(catalogItem.getTitle()));
+        log.info("IN saveNewRegion - saving region: {}", catalogItem);
+        return catalogRepository.save(catalogItem);
+    }
+
+    @Override
+    @Transactional
     public Catalog updateCountry(Catalog country) {
         country.setParentId(null);
         country.setTitle(makeFirstLetterUppercase(country.getTitle()));
@@ -139,7 +154,7 @@ public class CatalogServiceImpl implements CatalogService {
     @Transactional(propagation = Propagation.SUPPORTS)
     public String makeEveryWordStartsUppercase(String region) {
         StringBuilder regionForSearch = new StringBuilder(region.substring(0, 1).toUpperCase());
-        String str = region.replace("_", " ");
+        String str = region.replace("_", " ").trim();
         for (int i = 1; i < str.length(); i++) {
             if (str.substring(i - 1, i).equals(" ")) {
                 regionForSearch.append(str.substring(i, i + 1).toUpperCase());

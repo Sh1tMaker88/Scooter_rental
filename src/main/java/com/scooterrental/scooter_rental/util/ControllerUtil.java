@@ -58,7 +58,7 @@ public class ControllerUtil {
         Link link5 = linkTo(RentHistoryController.class)
                 .slash("/rental_points/" + country + "/" + region + "/" + city + "/" + rentalPointId +
                         "/scooters/" + scooterId + "/rent/two_days")
-                .withRel("one_days")
+                .withRel("two_days")
                 .withType("POST");
         Link link6 = linkTo(RentHistoryController.class)
                 .slash("/rental_points/" + country + "/" + region + "/" + city + "/" + rentalPointId +

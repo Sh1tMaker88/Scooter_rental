@@ -123,7 +123,7 @@ public class ScooterController {
                                               @PathVariable Long rentalPointId,
                                               @RequestBody Scooter scooter) {
         scooter.setRentalPoint(rentalPointService.getRentalPointById(rentalPointId));
-        Scooter scooterFromDB = scooterService.saveScooter(scooter);
+        Scooter scooterFromDB = scooterService.createNewScooter(scooter);
         return ResponseEntity.status(HttpStatus.CREATED).body(scooterFromDB);
     }
 

@@ -27,7 +27,7 @@ public class AdminController {
 
     @GetMapping(value = "/users/{id}")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    public ResponseEntity<User> getUserById(@PathVariable(name = "id") Long id) {
+    public ResponseEntity<User> getUserById(@PathVariable Long id) {
         User user = userService.findById(id);
 
         if (user == null) {

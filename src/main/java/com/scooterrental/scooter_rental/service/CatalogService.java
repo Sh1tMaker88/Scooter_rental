@@ -17,6 +17,8 @@ public interface CatalogService {
 
     Catalog saveNewCountry(Catalog country);
 
+    Catalog saveNewRegionOrCity(Catalog catalogItem, String parent);
+
     Catalog updateCountry(Catalog country);
 
     void deleteCatalogItemByTitle(String title);

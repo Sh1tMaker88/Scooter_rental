@@ -14,6 +14,8 @@ public interface RentalPointService {
 
     RentalPoint getRentalPointById(Long rentalPointId);
 
+    RentalPoint createNewRentalPoint(RentalPoint rentalPoint);
+
     RentalPoint saveRentalPoint(RentalPoint rentalPoint);
 
     void deleteRentalPointById(Long rentalPointId);

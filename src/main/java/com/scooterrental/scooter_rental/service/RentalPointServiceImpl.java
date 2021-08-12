@@ -51,6 +51,16 @@ public class RentalPointServiceImpl implements RentalPointService {
 
     @Override
     @Transactional
+    public RentalPoint createNewRentalPoint(RentalPoint rentalPoint) {
+        if (rentalPoint.getBalance() == null) {
+            rentalPoint.setBalance(0.0);
+        }
+        log.info("IN createNewRentalPoint - creating new rental point: {}", rentalPoint);
+        return rentalPointRepository.save(rentalPoint);
+    }
+
+    @Override
+    @Transactional
     public RentalPoint saveRentalPoint(RentalPoint rentalPoint) {
         RentalPoint rentalPointFromDB = getRentalPointById(rentalPoint.getId());
         rentalPoint.setScooterList(rentalPointFromDB.getScooterList());

@@ -36,7 +36,7 @@ public class AuthenticationController {
         return "login";
     }
 
-    @PostMapping(value = "/login")
+    @PostMapping("/login")
     public ResponseEntity login(@ModelAttribute AuthenticationRequestDto requestDto) {
         try {
             String username = requestDto.getUsername();

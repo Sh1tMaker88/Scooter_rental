@@ -1,7 +1,6 @@
 package com.scooterrental.scooter_rental.security.controller;
 
 import com.scooterrental.scooter_rental.exception.BadRequestException;
-import com.scooterrental.scooter_rental.security.dto.UserDto;
 import com.scooterrental.scooter_rental.security.model.User;
 import com.scooterrental.scooter_rental.security.service.UserService;
 import lombok.extern.slf4j.Slf4j;
@@ -14,7 +13,6 @@ import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.Date;
 import java.util.List;
 
 @Controller

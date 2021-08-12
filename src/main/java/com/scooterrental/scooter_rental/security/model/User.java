@@ -85,19 +85,12 @@ public class User extends RepresentationModel<User> {
         if (!super.equals(o)) return false;
         User user = (User) o;
         return Objects.equals(id, user.id) &&
-                Objects.equals(username, user.username) &&
-                Objects.equals(firstName, user.firstName) &&
-                Objects.equals(lastName, user.lastName) &&
-                Objects.equals(email, user.email) &&
-                Objects.equals(created, user.created) &&
-                Objects.equals(updated, user.updated) &&
-                status == user.status &&
-                Objects.equals(roles, user.roles);
+                Objects.equals(username, user.username);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), id, username, firstName, lastName, email, created, updated, status, roles);
+        return Objects.hash(super.hashCode(), id, username);
     }
 
     @Override

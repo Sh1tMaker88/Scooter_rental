@@ -84,6 +84,11 @@ public class CatalogController {
                 childrenOfItem = catalogService.countChildrenOfItem(catalog.getId());
             } else {
                 childrenOfItem = rentalPointService.countRentalPointByCityId(catalog.getId());
+                catalog.add(linkTo(StarterController.class)
+                        .slash("/rental_points/belarus/belarus")
+                        .slash(catalog.getTitle().replace(" ", "_").toLowerCase())
+                        .withRel("Elements in section: " + childrenOfItem));
+                continue;
             }
             catalog.add(linkTo(StarterController.class)
                     .slash("/rental_points/belarus")
@@ -110,7 +115,7 @@ public class CatalogController {
     @PostMapping("/{country}")
     public ResponseEntity<Catalog> addNewRegion(@PathVariable String country,
                                                 @RequestBody Catalog catalog) {
-        Catalog catalogItem = catalogService.saveCatalogItem(catalog, country);
+        Catalog catalogItem = catalogService.saveNewRegionOrCity(catalog, country);
         return ResponseEntity.ok(catalogItem);
     }
 
@@ -132,17 +137,16 @@ public class CatalogController {
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
-
     //city endpoints
     @GetMapping("/{country}/{region}")
     public ResponseEntity<CollectionModel<CatalogDTO>> getRegionChildren(@PathVariable String country,
-                                                                              @PathVariable String region) {
+                                                                         @PathVariable String region) {
         String pathString = catalogService.makeEveryWordStartsUppercase(region);
         List<CatalogDTO> catalogList = catalogService.findAllSecondLevelTree(pathString);
         for (CatalogDTO catalog : catalogList) {
             Integer childrenOfItem = rentalPointService.countRentalPointByCityId(catalog.getId());
             Link catalogItem = linkTo(CatalogController.class)
-                    .slash("/rental_points/" + country + "/" + region)
+                    .slash("/" + country + "/" + region)
                     .slash(catalog.getTitle().replace(" ", "_").toLowerCase())
                     .withRel("Rental points in section: " + childrenOfItem);
             catalog.add(catalogItem);
@@ -167,8 +171,8 @@ public class CatalogController {
     @PostMapping("/{country}/{region}")
     public ResponseEntity<Catalog> addNewCatalogItem(@PathVariable String country,
                                                      @PathVariable String region,
-                                                     @RequestBody Catalog catalog) {
-        Catalog catalogItem = catalogService.saveCatalogItem(catalog, region);
+                                                     @RequestBody Catalog city) {
+        Catalog catalogItem = catalogService.saveNewRegionOrCity(city, region);
         return ResponseEntity.ok(catalogItem);
     }
 

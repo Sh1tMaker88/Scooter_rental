@@ -16,6 +16,8 @@ public interface ScooterService {
 
     void deleteScooterByID(Long scooterId);
 
+    Scooter createNewScooter(Scooter scooter);
+
     Scooter saveScooter(Scooter scooter);
 
     Scooter setNotAvailableStatus(Long scooterId);

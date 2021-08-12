@@ -1,6 +1,8 @@
 package com.scooterrental.scooter_rental.controller;
 
+import com.scooterrental.scooter_rental.model.Catalog;
 import com.scooterrental.scooter_rental.model.RentalPoint;
+import com.scooterrental.scooter_rental.model.dto.CityDTO;
 import com.scooterrental.scooter_rental.model.dto.RentalPointDTO;
 import com.scooterrental.scooter_rental.model.dto.mapper.MapStructMapper;
 import com.scooterrental.scooter_rental.service.CatalogService;
@@ -70,9 +72,9 @@ public class RentalPointController {
 
     @GetMapping("/{country}/{region}/{city}/{rentalPointId}")
     public ResponseEntity<EntityModel<RentalPointDTO>> getRentalPointRepresentation(@PathVariable String country,
-                                                                                   @PathVariable String region,
-                                                                                   @PathVariable String city,
-                                                                                   @PathVariable Long rentalPointId) {
+                                                                                    @PathVariable String region,
+                                                                                    @PathVariable String city,
+                                                                                    @PathVariable Long rentalPointId) {
         RentalPoint rentalPoint = rentalPointService.getRentalPointById(rentalPointId);
         int scootersOfRentalPoint = rentalPoint.getScooterList().size();
         RentalPointDTO pointDTO = mapStructMapper.toRentalPointDTO(rentalPoint);
@@ -107,8 +109,9 @@ public class RentalPointController {
                                                          @PathVariable String region,
                                                          @PathVariable String city,
                                                          @RequestBody RentalPointDTO rentalPointDTO) {
-        RentalPoint rentalPoint = rentalPointService.saveRentalPoint(mapStructMapper.toRentalPoint(rentalPointDTO));
-
+        CityDTO cityDTO = mapStructMapper.toCityDTO(catalogService.getCatalogByTitle(city));
+        rentalPointDTO.setCity(cityDTO);
+        RentalPoint rentalPoint = rentalPointService.createNewRentalPoint(mapStructMapper.toRentalPoint(rentalPointDTO));
         return ResponseEntity.ok(mapStructMapper.toRentalPointDTO(rentalPoint));
     }
 
@@ -119,6 +122,8 @@ public class RentalPointController {
                                                             @PathVariable String city,
                                                             @PathVariable Long rentalPointId,
                                                             @RequestBody RentalPointDTO rentalPointDTO) {
+        CityDTO cityDTO = mapStructMapper.toCityDTO(catalogService.getCatalogByTitle(city));
+        rentalPointDTO.setCity(cityDTO);
         RentalPoint rentalPoint = mapStructMapper.updateRentalPointFromRentalPointDTO(rentalPointDTO,
                 rentalPointService.getRentalPointById(rentalPointId));
         RentalPoint savedRentalPoint = rentalPointService.saveRentalPoint(rentalPoint);
@@ -128,9 +133,9 @@ public class RentalPointController {
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @DeleteMapping("/{country}/{region}/{city}/{rentalPointId}")
     public ResponseEntity<RentalPoint> deleteRentalPoint(@PathVariable String country,
-                                            @PathVariable String region,
-                                            @PathVariable String city,
-                                            @PathVariable Long rentalPointId) {
+                                                         @PathVariable String region,
+                                                         @PathVariable String city,
+                                                         @PathVariable Long rentalPointId) {
         rentalPointService.deleteRentalPointById(rentalPointId);
 
         return ResponseEntity.status(HttpStatus.OK).build();

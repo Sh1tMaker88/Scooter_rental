@@ -4,6 +4,7 @@ import com.scooterrental.scooter_rental.exception.ServiceException;
 import com.scooterrental.scooter_rental.model.Scooter;
 import com.scooterrental.scooter_rental.model.ScooterStatus;
 import com.scooterrental.scooter_rental.repository.RentalPointRepository;
+import com.scooterrental.scooter_rental.repository.RentalPriceRepository;
 import com.scooterrental.scooter_rental.repository.ScooterRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -20,10 +21,12 @@ public class ScooterServiceImpl implements ScooterService {
 
     private final ScooterRepository scooterRepository;
     private final RentalPointRepository rentalPointRepository;
+    private final RentalPriceRepository rentalPriceRepository;
 
-    public ScooterServiceImpl(ScooterRepository scooterRepository, RentalPointRepository rentalPointRepository) {
+    public ScooterServiceImpl(ScooterRepository scooterRepository, RentalPointRepository rentalPointRepository, RentalPriceRepository rentalPriceRepository) {
         this.scooterRepository = scooterRepository;
         this.rentalPointRepository = rentalPointRepository;
+        this.rentalPriceRepository = rentalPriceRepository;
     }
 
     @Override
@@ -71,6 +74,17 @@ public class ScooterServiceImpl implements ScooterService {
         }
         scooterRepository.deleteScooterById(scooterId);
         log.info("IN deleteScooterByID - scooter with ID={} successfully deleted", scooterId);
+    }
+
+    @Override
+    @Transactional
+    public Scooter createNewScooter(Scooter scooter) {
+        log.info("IN createNewScooter - creating new scooter: {}", scooter);
+        Long rentPriceId = scooter.getRentalPrice().getId();
+        if (rentPriceId != null) {
+            scooter.setRentalPrice(rentalPriceRepository.getById(rentPriceId));
+        }
+        return scooterRepository.save(scooter);
     }
 
     @Override
